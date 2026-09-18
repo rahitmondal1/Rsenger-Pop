@@ -1,0 +1,105 @@
+/* =========================================================
+   RSENGER PREMIUM V3 — VISUAL LAYER
+   This file intentionally stays separate from the app logic.
+   Existing inline CSS/JS remains untouched.
+   ========================================================= */
+:root{
+  --rs-bg:#05060c;
+  --rs-panel:rgba(13,16,31,.86);
+  --rs-panel-2:rgba(19,23,43,.92);
+  --rs-border:rgba(255,255,255,.09);
+  --rs-text:#f7f8ff;
+  --rs-muted:#8f97aa;
+  --rs-cyan:#20d9ff;
+  --rs-violet:#8b5cf6;
+  --rs-pink:#ff3fd1;
+  --rs-radius:20px;
+  --rs-shadow:0 18px 55px rgba(0,0,0,.34);
+}
+
+html,body,#app,.app,.screen{background:var(--rs-bg);}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+button,input,textarea,select{font:inherit;}
+button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+
+/* Safe areas for modern Android phones */
+.screen,.bottom-nav,.profile-header,.notification-header,.rs-settings-header{
+  padding-left:max(0px, env(safe-area-inset-left));
+  padding-right:max(0px, env(safe-area-inset-right));
+}
+.bottom-nav{padding-bottom:max(8px, env(safe-area-inset-bottom));}
+
+/* Premium depth without changing existing component structure */
+.premium-chat-list-item,
+.rs-setting-card,
+.rsenger-admin-card,
+.premium-notification-card,
+.premium-profile-action,
+.discover-friends-btn{
+  border:1px solid var(--rs-border)!important;
+  box-shadow:0 10px 32px rgba(0,0,0,.18);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+}
+
+.premium-chat-list-item:active,
+.rs-setting-card:active,
+.rsenger-admin-card:active,
+.premium-notification-card:active,
+.premium-profile-action:active,
+.discover-friends-btn:active{transform:scale(.985);}
+
+.premium-chat-list-item:hover,
+.rs-setting-card:hover,
+.rsenger-admin-card:hover,
+.premium-notification-card:hover{border-color:rgba(139,92,246,.28)!important;box-shadow:0 14px 40px rgba(0,0,0,.26);}
+
+/* Better focus visibility for keyboard/accessibility */
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid rgba(32,217,255,.75);
+  outline-offset:2px;
+}
+
+/* Images never overflow the mobile viewport */
+img,video{max-width:100%;}
+
+/* Smooth scrolling areas */
+#chatMessages,#friendsList,#requestList,#notificationList,.rs-settings-content{
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Premium scrollbar */
+*{scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.45) transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--rs-cyan),var(--rs-violet));border-radius:99px;}
+
+/* Buttons with icons stay centered on small screens */
+.premium-back-btn,.premium-icon-btn,.notification-clear-btn{display:inline-flex;align-items:center;justify-content:center;}
+
+/* Prevent accidental text selection while tapping chat controls */
+.send-btn,.chat-action-btn,.premium-back-btn,.premium-icon-btn,.bottom-nav button{user-select:none;}
+
+/* Media cards */
+#chatPage img{border-radius:14px;}
+#chatPage video{border-radius:14px;background:#000;}
+
+/* Empty/loading states */
+.notification-loading,.friends-empty{min-height:180px;}
+
+/* Small Android screens */
+@media (max-width:380px){
+  .rs-settings-header h2{font-size:22px!important;}
+  .premium-chat-list-item{padding-left:10px!important;padding-right:10px!important;}
+  .premium-profile-action{min-height:56px!important;}
+}
+
+/* Tablet/foldable width */
+@media (min-width:600px){
+  body{max-width:620px;margin:0 auto;box-shadow:0 0 80px rgba(0,0,0,.45);}
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+}
