@@ -53811,5 +53811,511 @@ window.addEventListener("beforeunload",()=>{if(window.rsChainUnsubscribe)window.
 .rs-chain-page .hidden,.rs-chain-overlay.hidden{display:none!important}.rs-chain-overlay.hidden,.rs-chain-viewer-overlay.hidden{display:none!important}
 @media(max-width:420px){.rs-chain-card{border-radius:21px;padding:13px}.rs-chain-title-row h2{font-size:18px}.rs-chain-parts{font-size:8px}.rs-chain-tabs{padding-left:13px;padding-right:13px}.rs-chain-feed{padding-left:10px;padding-right:10px}}
 </style>
+
+<style id="rsenger-theme-system-final">
+/* =========================================================
+   RSENGER THEME ENGINE — FINAL LIGHT / DARK / SYSTEM LAYER
+   This layer is intentionally last so older dark-first rules
+   remain untouched when Dark is selected, while Light gets a
+   complete coordinated premium palette.
+   ========================================================= */
+
+/* ---------- LIGHT PALETTE ---------- */
+body.rs-theme-light{
+  --rs-bg:#f4f7fb;
+  --rs-bg-2:#ffffff;
+  --rs-surface:#ffffff;
+  --rs-surface-2:#f8fafc;
+  --rs-surface-3:#eef2f7;
+  --rs-border:rgba(15,23,42,.09);
+  --rs-border-strong:rgba(15,23,42,.14);
+  --rs-text:#111827;
+  --rs-text-2:#334155;
+  --rs-muted:#64748b;
+  --rs-soft:rgba(15,23,42,.055);
+  --rs-shadow:0 16px 42px rgba(15,23,42,.10);
+  --rs-shadow-soft:0 8px 25px rgba(15,23,42,.08);
+  --rs-gradient:linear-gradient(135deg,#8b5cf6,#22b8d6);
+  color-scheme:light;
+  background:#f4f7fb !important;
+  color:#111827 !important;
+}
+
+/* ---------- GLOBAL SURFACES ---------- */
+body.rs-theme-light,
+body.rs-theme-light .app,
+body.rs-theme-light .screen,
+body.rs-theme-light #homePage,
+body.rs-theme-light #profilePage,
+body.rs-theme-light #friendsPage,
+body.rs-theme-light #requestsPage,
+body.rs-theme-light #notificationsPage,
+body.rs-theme-light #settingsPage,
+body.rs-theme-light #chatPage,
+body.rs-theme-light #chainPage,
+body.rs-theme-light #rsengerGroupPage{
+  background-color:var(--rs-bg) !important;
+  color:var(--rs-text) !important;
+}
+
+body.rs-theme-light .screen::before,
+body.rs-theme-light .screen::after{
+  opacity:.18 !important;
+}
+
+/* Keep decorative premium glows, but make them subtle on white. */
+body.rs-theme-light #homePage,
+body.rs-theme-light #profilePage,
+body.rs-theme-light #friendsPage,
+body.rs-theme-light #requestsPage{
+  background:
+    radial-gradient(circle at 12% 12%,rgba(139,92,246,.10),transparent 32%),
+    radial-gradient(circle at 88% 22%,rgba(34,211,238,.08),transparent 30%),
+    linear-gradient(180deg,#f9fbff 0%,#f3f6fb 100%) !important;
+}
+
+/* ---------- TEXT ---------- */
+body.rs-theme-light h1,
+body.rs-theme-light h2,
+body.rs-theme-light h3,
+body.rs-theme-light h4,
+body.rs-theme-light h5,
+body.rs-theme-light h6,
+body.rs-theme-light strong,
+body.rs-theme-light b,
+body.rs-theme-light .premium-chat-name,
+body.rs-theme-light .premium-header-title h2,
+body.rs-theme-light .profile-header-title span,
+body.rs-theme-light .rs-settings-header h2,
+body.rs-theme-light .rs-setting-copy b,
+body.rs-theme-light .section-title,
+body.rs-theme-light .friends-section-title h3,
+body.rs-theme-light .notification-title-wrap h2,
+body.rs-theme-light .rs-chain-topbar h1{
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light p,
+body.rs-theme-light small,
+body.rs-theme-light span,
+body.rs-theme-light label,
+body.rs-theme-light .rs-setting-copy small,
+body.rs-theme-light .rs-settings-footer,
+body.rs-theme-light .notification-title-wrap span,
+body.rs-theme-light .friends-section-title p{
+  color:var(--rs-muted) !important;
+}
+
+/* ---------- INPUTS / SEARCH / SELECTS ---------- */
+body.rs-theme-light input,
+body.rs-theme-light textarea,
+body.rs-theme-light select,
+body.rs-theme-light .premium-search,
+body.rs-theme-light .friends-search,
+body.rs-theme-light .field,
+body.rs-theme-light .edit-input,
+body.rs-theme-light .rsenger-admin-search,
+body.rs-theme-light .rsenger-restricted-page-search,
+body.rs-theme-light .rs-chain-input{
+  background:#ffffff !important;
+  color:var(--rs-text) !important;
+  border-color:var(--rs-border-strong) !important;
+  box-shadow:0 7px 24px rgba(15,23,42,.055),inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+body.rs-theme-light input::placeholder,
+body.rs-theme-light textarea::placeholder{
+  color:#94a3b8 !important;
+}
+body.rs-theme-light select option{
+  background:#ffffff !important;
+  color:#111827 !important;
+}
+
+/* ---------- CARDS ---------- */
+body.rs-theme-light .rs-setting-card,
+body.rs-theme-light .premium-profile-card,
+body.rs-theme-light .premium-profile-action,
+body.rs-theme-light .friends-empty,
+body.rs-theme-light .premium-chat-list-item,
+body.rs-theme-light .rsenger-admin-card,
+body.rs-theme-light .rsenger-message-control-card,
+body.rs-theme-light .rsenger-pinned-card,
+body.rs-theme-light .rs-chain-card,
+body.rs-theme-light .rs-chain-composer,
+body.rs-theme-light .group-welcome-card{
+  background:linear-gradient(145deg,#ffffff 0%,#f8fafc 100%) !important;
+  color:var(--rs-text) !important;
+  border-color:var(--rs-border) !important;
+  box-shadow:var(--rs-shadow-soft),inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Settings itself: fully light, including header, cards, controls and footer. */
+body.rs-theme-light #settingsPage.rsenger-settings-page{
+  background:
+    radial-gradient(650px 420px at 50% 0%,rgba(139,92,246,.10),transparent 62%),
+    radial-gradient(500px 380px at 0% 70%,rgba(34,211,238,.06),transparent 65%),
+    linear-gradient(180deg,#f9fbff 0%,#f1f5fa 100%) !important;
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .rsenger-settings-page .rs-settings-header{
+  background:rgba(249,251,255,.88) !important;
+  border-bottom-color:rgba(15,23,42,.07) !important;
+  backdrop-filter:blur(22px) saturate(1.25) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.25) !important;
+}
+body.rs-theme-light .rsenger-settings-page .rs-settings-section-title{
+  color:#64748b !important;
+}
+body.rs-theme-light .rsenger-settings-page .rs-setting-icon{
+  background:linear-gradient(145deg,rgba(139,92,246,.12),rgba(34,211,238,.08)) !important;
+  border-color:rgba(139,92,246,.13) !important;
+  color:#6d4be8 !important;
+}
+body.rs-theme-light .rsenger-settings-page .rs-setting-arrow{
+  color:#94a3b8 !important;
+}
+body.rs-theme-light .rsenger-settings-page .rs-logout-card{
+  background:linear-gradient(145deg,#fff5f6,#fffafa) !important;
+  color:#dc2626 !important;
+  border-color:rgba(220,38,38,.13) !important;
+  box-shadow:0 9px 25px rgba(220,38,38,.07) !important;
+}
+
+/* ---------- BUTTONS / ICON BUTTONS ---------- */
+body.rs-theme-light .premium-back-btn,
+body.rs-theme-light .premium-icon-btn,
+body.rs-theme-light .icon-btn,
+body.rs-theme-light .profile-edit-btn,
+body.rs-theme-light .rs-settings-header-badge,
+body.rs-theme-light .rs-chain-tabs button,
+body.rs-theme-light .rs-chain-create,
+body.rs-theme-light .rsenger-group-back,
+body.rs-theme-light .attachment-btn,
+body.rs-theme-light .password-toggle,
+body.rs-theme-light .notification-clear-btn{
+  background:linear-gradient(145deg,#ffffff,#f1f5f9) !important;
+  color:#334155 !important;
+  border-color:rgba(15,23,42,.09) !important;
+  box-shadow:0 8px 22px rgba(15,23,42,.08),inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+body.rs-theme-light .premium-back-btn svg,
+body.rs-theme-light .premium-icon-btn svg,
+body.rs-theme-light .icon-btn svg,
+body.rs-theme-light .profile-edit-btn svg,
+body.rs-theme-light .rs-settings-header-badge svg,
+body.rs-theme-light .rsenger-group-back svg{
+  color:#475569 !important;
+}
+body.rs-theme-light .main-btn,
+body.rs-theme-light .send-btn,
+body.rs-theme-light .group-send-btn,
+body.rs-theme-light .premium-search-btn,
+body.rs-theme-light .discover-friends-btn,
+body.rs-theme-light .save-profile-btn,
+body.rs-theme-light .rs-chain-publish{
+  background:var(--rs-gradient) !important;
+  color:#ffffff !important;
+  border-color:transparent !important;
+  box-shadow:0 12px 30px rgba(99,102,241,.20) !important;
+}
+body.rs-theme-light .main-btn *,
+body.rs-theme-light .send-btn *,
+body.rs-theme-light .group-send-btn *,
+body.rs-theme-light .premium-search-btn *,
+body.rs-theme-light .discover-friends-btn *,
+body.rs-theme-light .save-profile-btn *,
+body.rs-theme-light .rs-chain-publish *{
+  color:#ffffff !important;
+}
+
+/* ---------- BOTTOM NAV ---------- */
+body.rs-theme-light #globalBottomNav{
+  background:rgba(255,255,255,.92) !important;
+  border-top-color:rgba(15,23,42,.08) !important;
+  box-shadow:0 -10px 35px rgba(15,23,42,.08) !important;
+  backdrop-filter:blur(22px) saturate(1.3) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.3) !important;
+}
+body.rs-theme-light #globalBottomNav button{
+  color:#64748b !important;
+}
+body.rs-theme-light #globalBottomNav button svg{
+  color:#64748b !important;
+}
+body.rs-theme-light #globalBottomNav button.active,
+body.rs-theme-light #globalBottomNav button.active svg{
+  color:#6d4be8 !important;
+}
+
+/* ---------- CHAT ---------- */
+body.rs-theme-light .premium-chat-header,
+body.rs-theme-light .chat-header{
+  background:rgba(255,255,255,.90) !important;
+  border-bottom-color:rgba(15,23,42,.08) !important;
+  color:var(--rs-text) !important;
+  box-shadow:0 8px 25px rgba(15,23,42,.06) !important;
+}
+body.rs-theme-light .messages{
+  background:
+    radial-gradient(circle at 20% 10%,rgba(139,92,246,.05),transparent 30%),
+    linear-gradient(180deg,#f8fafc,#eef2f7) !important;
+}
+body.rs-theme-light .message-box,
+body.rs-theme-light .attachment-menu,
+body.rs-theme-light .reply-preview,
+body.rs-theme-light .attachment-preview{
+  background:#ffffff !important;
+  color:var(--rs-text) !important;
+  border-color:var(--rs-border) !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.09) !important;
+}
+body.rs-theme-light .message-box input,
+body.rs-theme-light #messageInput{
+  background:#f8fafc !important;
+  color:#111827 !important;
+  border-color:rgba(15,23,42,.08) !important;
+}
+body.rs-theme-light .attachment-menu button{
+  color:#334155 !important;
+}
+body.rs-theme-light .attachment-menu button span:last-child{
+  color:#334155 !important;
+}
+
+/* ---------- PROFILE / FRIENDS / NOTIFICATIONS ---------- */
+body.rs-theme-light .premium-profile-hero{
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .profile-status-pill{
+  background:rgba(16,185,129,.10) !important;
+  border-color:rgba(16,185,129,.15) !important;
+  color:#047857 !important;
+}
+body.rs-theme-light .profile-status-pill span{
+  background:#10b981 !important;
+}
+body.rs-theme-light .notification-screen,
+body.rs-theme-light .notification-list,
+body.rs-theme-light .friends-search{
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .notification-item,
+body.rs-theme-light .notification-card{
+  background:#ffffff !important;
+  color:var(--rs-text) !important;
+  border-color:var(--rs-border) !important;
+  box-shadow:0 8px 25px rgba(15,23,42,.06) !important;
+}
+
+/* ---------- GROUP ---------- */
+body.rs-theme-light .rsenger-group-header{
+  background:rgba(255,255,255,.92) !important;
+  border-bottom-color:rgba(15,23,42,.07) !important;
+}
+body.rs-theme-light .rsenger-group-title,
+body.rs-theme-light .rsenger-group-title-text h2{
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .rsenger-group-title-text span{
+  color:#64748b !important;
+}
+body.rs-theme-light .rsenger-group-messages{
+  background:#f1f5f9 !important;
+}
+body.rs-theme-light .rsenger-group-input-area{
+  background:rgba(255,255,255,.96) !important;
+  border-color:rgba(15,23,42,.09) !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.08) !important;
+}
+body.rs-theme-light .rsenger-group-message-input{
+  background:#f8fafc !important;
+  color:#111827 !important;
+  border-color:rgba(15,23,42,.07) !important;
+}
+body.rs-theme-light .rsenger-group-message,
+body.rs-theme-light .rsenger-group-message-card{
+  color:var(--rs-text) !important;
+}
+
+/* ---------- MODALS / POPUPS / MENUS ---------- */
+body.rs-theme-light .premium-popup-overlay,
+body.rs-theme-light .premium-alert-overlay,
+body.rs-theme-light .edit-profile-overlay,
+body.rs-theme-light .edit-message-overlay,
+body.rs-theme-light .rs-chain-overlay{
+  background:rgba(15,23,42,.28) !important;
+  backdrop-filter:blur(18px) saturate(1.1) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.1) !important;
+}
+body.rs-theme-light .premium-popup,
+body.rs-theme-light .premium-alert-box,
+body.rs-theme-light .edit-profile-card,
+body.rs-theme-light .edit-message-modal,
+body.rs-theme-light .rs-chain-composer,
+body.rs-theme-light .rsenger-group-message-menu{
+  background:
+    radial-gradient(circle at 50% -15%,rgba(139,92,246,.10),transparent 42%),
+    linear-gradient(145deg,#ffffff,#f7f9fc) !important;
+  color:#111827 !important;
+  border-color:rgba(15,23,42,.10) !important;
+  box-shadow:0 30px 90px rgba(15,23,42,.20),inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+body.rs-theme-light .premium-popup *,
+body.rs-theme-light .premium-alert-box *,
+body.rs-theme-light .edit-profile-card *,
+body.rs-theme-light .edit-message-modal *,
+body.rs-theme-light .rs-chain-composer *{
+  color:inherit;
+}
+body.rs-theme-light .premium-popup-btn,
+body.rs-theme-light .premium-alert-ok,
+body.rs-theme-light .edit-profile-card button[type="submit"]{
+  background:var(--rs-gradient) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+body.rs-theme-light .premium-popup-btn *,
+body.rs-theme-light .premium-alert-ok *,
+body.rs-theme-light .edit-profile-card button[type="submit"] *{
+  color:#fff !important;
+}
+
+/* ---------- CHAIN ---------- */
+body.rs-theme-light .rs-chain-page{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(139,92,246,.09),transparent 35%),
+    linear-gradient(180deg,#f9fbff,#f1f5fa) !important;
+}
+body.rs-theme-light .rs-chain-tabs button{
+  color:#64748b !important;
+}
+body.rs-theme-light .rs-chain-tabs button.active{
+  background:linear-gradient(135deg,#8b5cf6,#22b8d6) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+body.rs-theme-light .rs-chain-tabs button.active *{
+  color:#fff !important;
+}
+
+/* ---------- AUTH / SPLASH ---------- */
+body.rs-theme-light #loginPage,
+body.rs-theme-light #registerPage,
+body.rs-theme-light #splashPage{
+  background:
+    radial-gradient(circle at 15% 15%,rgba(139,92,246,.10),transparent 34%),
+    radial-gradient(circle at 85% 80%,rgba(34,211,238,.08),transparent 34%),
+    linear-gradient(180deg,#f9fbff,#eef3f8) !important;
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .auth-header h1,
+body.rs-theme-light .auth-header p,
+body.rs-theme-light .account-text,
+body.rs-theme-light .or span{
+  color:var(--rs-text) !important;
+}
+body.rs-theme-light .auth-header p,
+body.rs-theme-light .account-text{
+  color:#64748b !important;
+}
+body.rs-theme-light .form-box,
+body.rs-theme-light .google-login{
+  background:#ffffff !important;
+  color:#334155 !important;
+  border-color:rgba(15,23,42,.10) !important;
+  box-shadow:0 12px 32px rgba(15,23,42,.07) !important;
+}
+
+/* ---------- ICONS: don't leave dark-only strokes behind ---------- */
+body.rs-theme-light svg{
+  stroke:currentColor;
+}
+body.rs-theme-light .rs-setting-icon svg,
+body.rs-theme-light .premium-card-icon svg,
+body.rs-theme-light .premium-info-icon svg{
+  color:inherit !important;
+}
+</style>
+
+
+<script id="rsenger-theme-controller-final">
+(function(){
+  'use strict';
+
+  const KEY='rsenger_settings_v2';
+
+  function getTheme(){
+    try{
+      const s=JSON.parse(localStorage.getItem(KEY)||'{}');
+      return ['system','light','dark'].includes(s.theme) ? s.theme : 'system';
+    }catch(e){ return 'system'; }
+  }
+
+  function systemDark(){
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+
+  function applyRsengerTheme(){
+    const selected=getTheme();
+    const dark=selected==='dark' || (selected==='system' && systemDark());
+    document.body.classList.toggle('rs-theme-light',!dark);
+    document.body.classList.toggle('rs-theme-dark',dark);
+    document.documentElement.style.colorScheme=dark?'dark':'light';
+
+    /* Keep the existing .dark compatibility class in sync. */
+    document.body.classList.toggle('dark',dark);
+
+    const root=document.documentElement;
+    if(dark){
+      root.style.setProperty('--rs-theme-bg','#05060c');
+      root.style.setProperty('--rs-theme-text','#f7f9ff');
+    }else{
+      root.style.setProperty('--rs-theme-bg','#f4f7fb');
+      root.style.setProperty('--rs-theme-text','#111827');
+    }
+  }
+
+  window.rsengerApplyTheme=applyRsengerTheme;
+
+  /* Replace the old theme handler only; Firebase/localStorage behavior stays intact. */
+  const previousApplyRsTheme=window.applyRsTheme;
+  window.applyRsTheme=function(value){
+    if(typeof previousApplyRsTheme==='function'){
+      previousApplyRsTheme(value);
+    }else{
+      try{
+        const s=JSON.parse(localStorage.getItem(KEY)||'{}');
+        s.theme=['system','light','dark'].includes(value)?value:'system';
+        localStorage.setItem(KEY,JSON.stringify(s));
+      }catch(e){}
+    }
+    applyRsengerTheme();
+  };
+
+  /* Existing loadSettings functions may be called by navigation code. */
+  const previousLoad=window.loadRsSettings;
+  window.loadRsSettings=function(){
+    if(typeof previousLoad==='function') previousLoad();
+    applyRsengerTheme();
+  };
+
+  function bindSystemWatcher(){
+    if(!window.matchMedia) return;
+    const media=window.matchMedia('(prefers-color-scheme: dark)');
+    const update=function(){
+      if(getTheme()==='system') applyRsengerTheme();
+    };
+    if(media.addEventListener) media.addEventListener('change',update);
+    else if(media.addListener) media.addListener(update);
+  }
+
+  applyRsengerTheme();
+  bindSystemWatcher();
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',applyRsengerTheme,{once:true});
+  }
+})();
+</script>
+
 </body>
 </html>
