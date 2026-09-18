@@ -1,42 +1,43 @@
-RSENGER — PYTHON ANDROID VERSION
+RSENGER PREMIUM V3
+==================
 
-What this is
--------------
-This package turns the existing Rsenger HTML/Firebase application into an Android APK shell using Python + Kivy + the native Android WebView.
-
-Why this approach
------------------
-The supplied app is a large Firebase web application: authentication, Firestore, Realtime Database, Firebase Storage, Cloudinary uploads and Lucide UI are already implemented in JavaScript. A literal rewrite of ~1,000 KB of HTML/JS into pure Python would not preserve those services reliably. This version keeps the existing working web logic and uses Python for the Android application shell.
+This package keeps the existing Firebase-powered Rsenger web application and packages it as an Android application using Python + Kivy + Android WebView.
 
 Files
 -----
-main.py         Python Android app shell
-index.html      Your supplied Rsenger application
-buildozer.spec  Android APK build configuration
+index.html              Existing Rsenger app logic/UI
+style.css               Premium visual layer and Android/mobile refinements
+main.py                 Python/Kivy Android shell
+buildozer.spec          APK build configuration
+assets/rsenger_logo.png App logo/icon
+.github/workflows/...   GitHub Actions workflow for cloud APK builds
+FIREBASE_RULES_WARNING  Important security note about the rules supplied for this project
+index.backup.html       Original HTML backup
 
-Android build
--------------
-1. Use a Linux/WSL/cloud Linux environment with Buildozer. Buildozer itself is normally not run directly on Android.
-2. Put all three files in one folder.
-3. Run:
-   buildozer android debug
-4. The APK will be created under bin/.
+GitHub / Android build
+----------------------
+1. Upload the project files to a GitHub repository.
+2. Make sure buildozer.spec is in the repository root.
+3. Open GitHub -> Actions.
+4. Select "Build Rsenger Android APK".
+5. Run workflow (or push to main/master).
+6. After the build finishes, open the workflow run and download the APK artifact named Rsenger-Premium-APK.
 
-Important
----------
-- Google Sign-In still depends on the Firebase Authentication configuration and authorized domains.
-- Firestore/Realtime Database security rules must protect private chats and user data. UI filtering alone is NOT security.
-- Cloudinary upload presets must be configured correctly for uploads.
-- The native WebView shell improves APK packaging, Android back navigation, caching, JavaScript/DOM support and media permissions, but it does not magically convert Firebase web APIs into native Python APIs.
+The workflow uses the Buildozer GitHub Action. Buildozer itself is normally run in Linux/CI rather than directly on Android.
 
-Premium upgrades included in the shell
----------------------------------------
-- Native Android WebView
-- JavaScript + DOM storage enabled
-- Persistent cookies for Firebase sessions
-- Image/media loading and cache support
-- Android back-button navigation inside the app
-- Portrait app layout
-- Full-screen app mode
-- Network/media permissions
-- Bundled offline HTML fallback
+Important functional notes
+--------------------------
+- The existing app uses Firebase Auth, Firestore, Realtime Database, Firebase Messaging/Storage and Cloudinary/webtonative integrations.
+- The existing HTML was retained rather than pretending a ~1 MB web app had been fully rewritten into native Python.
+- Google Sign-In inside a local Android WebView can require additional Firebase/Google configuration; a production native Google login may need Android Firebase configuration and package signing fingerprints.
+- The existing app references style.css; this package now includes that missing stylesheet.
+- The supplied Firestore rules are wide open. See FIREBASE_RULES_WARNING.txt before production use.
+- Cloudinary upload presets must remain valid for image/file uploads.
+
+Build command (Linux/CI)
+------------------------
+buildozer android debug
+
+APK output
+----------
+The Buildozer APK is placed in bin/ when built locally. In GitHub Actions it is uploaded as an artifact.
