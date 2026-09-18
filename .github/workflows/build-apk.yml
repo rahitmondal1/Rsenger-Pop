@@ -1,64 +1,47 @@
-name: Build Rsenger Android APK
+name: Rsenger Android APK
 
 on:
   workflow_dispatch:
 
-  push:
-    branches:
-      - main
-      - master
-
-
 jobs:
-
-  build-android:
+  build:
 
     runs-on: ubuntu-22.04
 
-
     steps:
 
-      # --------------------------------
-      # 1. Checkout project
-      # --------------------------------
-      - name: Checkout
+      # ==============================
+      # CHECKOUT
+      # ==============================
+      - name: Checkout source
         uses: actions/checkout@v4
 
 
-      # --------------------------------
-      # 2. Setup host Python
-      # --------------------------------
-      #
-      # This is the Python used by
-      # Buildozer on GitHub Actions.
-      #
-      # Android Python is separately
-      # pinned inside buildozer.spec.
-      #
-      - name: Set up Python
+      # ==============================
+      # PYTHON FOR BUILDOZER
+      # ==============================
+      - name: Setup Python
         uses: actions/setup-python@v5
-
         with:
           python-version: "3.11"
+          cache: "pip"
 
 
-      # --------------------------------
-      # 3. Setup Java
-      # --------------------------------
-      - name: Set up Java 17
+      # ==============================
+      # JAVA 17
+      # ==============================
+      - name: Setup Java
         uses: actions/setup-java@v4
-
         with:
-          distribution: temurin
+          distribution: "temurin"
           java-version: "17"
 
 
-      # --------------------------------
-      # 4. Install Linux dependencies
-      # --------------------------------
-      - name: Install system dependencies
+      # ==============================
+      # ANDROID / BUILDOZER DEPENDENCIES
+      # ==============================
+      - name: Install Linux dependencies
         run: |
-
           sudo apt-get update
 
           sudo apt-get install -y \
@@ -68,11 +51,12 @@ jobs:
             autoconf \
             automake \
             libtool \
+            libltdl-dev \
             pkg-config \
             zlib1g-dev \
             libncurses5-dev \
             libncursesw5-dev \
-            libtinfo6 \
+            libtinfo5 \
             cmake \
             libffi-dev \
             libssl-dev \
@@ -80,47 +64,62 @@ jobs:
             autopoint
 
 
-      # --------------------------------
-      # 5. Install Rust
-      # --------------------------------
+      # ==============================
+      # RUST
+      # ==============================
       - name: Install Rust
         run: |
-
-          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          curl --proto '=https' \
+               --tlsv1.2 \
+               -sSf https://sh.rustup.rs \
+               | sh -s -- -y
 
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
 
-      # --------------------------------
-      # 6. Install Buildozer
-      # --------------------------------
+      # ==============================
+      # UPDATE PIP TOOLS
+      # ==============================
+      - name: Upgrade pip tools
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+
+
+      # ==============================
+      # INSTALL BUILDOZER
+      # ==============================
       - name: Install Buildozer
         run: |
-
-          python -m pip install --upgrade pip
-
           python -m pip install --upgrade buildozer
 
 
-      # --------------------------------
-      # 7. Build APK
-      # --------------------------------
-      - name: Build APK
+      # ==============================
+      # SHOW ENVIRONMENT
+      # ==============================
+      - name: Check build environment
         run: |
+          python --version
+          pip --version
+          buildozer --version
+          java -version
 
-          buildozer android debug
+
+      # ==============================
+      # BUILD APK
+      # ==============================
+      - name: Build Android Debug APK
+        env:
+          PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: "0"
+        run: |
+          buildozer -v android debug
 
 
-      # --------------------------------
-      # 8. Upload APK
-      # --------------------------------
+      # ==============================
+      # UPLOAD APK
+      # ==============================
       - name: Upload APK
         uses: actions/upload-artifact@v4
-
         with:
-
-          name: Rsenger-Premium-APK
-
+          name: Rsenger-APK
           path: bin/*.apk
-
           if-no-files-found: error
