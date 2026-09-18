@@ -9,49 +9,54 @@ package.name = rsenger
 # (str) Package domain
 package.domain = com.rsenger
 
-# (str) Application version
+# (str) Version
 version = 3.0.0
 
-# (str) Source directory
+# (str) Source code directory
 source.dir = .
 
-# (list) Source file extensions
-source.include_exts = py,html,css,js,png,jpg,jpeg,webp,json,txt
+# (str) File extensions to include
+source.include_exts = py,html,css,js,png,jpg,jpeg,webp,gif,json,txt,ico,svg
 
 # (str) Application requirements
-requirements = python3,kivy,pyjnius
+#
+# IMPORTANT:
+# Explicitly pin Android Python to 3.13
+# so python-for-android does NOT use Python 3.14.
+requirements = python3==3.13.7,hostpython3==3.13.7,kivy,pyjnius
 
-# (str) Orientation
+# (str) Supported orientation
 orientation = portrait
 
 # (bool) Fullscreen
 fullscreen = 1
 
-
-# (str) Android API
+# (int) Android API
 android.api = 35
 
-# (str) Minimum Android API
-android.minapi = 23
+# (int) Minimum Android API
+android.minapi = 24
 
-# (list) Android architectures
+# (str) Android architectures
 android.archs = arm64-v8a,armeabi-v7a
 
-
-# (list) Android permissions
+# (str) Android permissions
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,CAMERA,READ_MEDIA_IMAGES,READ_MEDIA_VIDEO,POST_NOTIFICATIONS
 
-# (bool) Enable AndroidX
+# (bool) AndroidX
 android.enable_androidx = True
 
 # (bool) Accept Android SDK license
 android.accept_sdk_license = True
 
-# (bool) Allow Android backup
+# (bool) Allow backup
 android.allow_backup = True
 
-# (str) Application icon
+# (str) App icon
 icon.filename = %(source.dir)s/assets/rsenger_logo.png
+
+# (str) Presplash
+# presplash.filename = %(source.dir)s/assets/rsenger_logo.png
 
 
 [buildozer]
@@ -65,5 +70,5 @@ bin_dir = bin
 # (int) Log level
 log_level = 2
 
-# (bool) Warn when running as root
+# (bool) Warn if running as root
 warn_on_root = 1
