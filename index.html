@@ -54591,5 +54591,123 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   try{auth.onAuthStateChanged(function(){setTimeout(enforceLoginState,150);setTimeout(enforceLoginState,700);});}catch(e){}
 })();
 </script>
+
+<!-- =====================================================
+     RSENGER V5 UI / SCROLL / FRIEND SEARCH STABILITY FIX
+===================================================== -->
+<style id="rsenger-v5-ui-fixes">
+/* Keep the global navigation above every page and keep page content clear of it. */
+#globalBottomNav{
+  position:fixed !important;
+  left:18px !important;
+  right:18px !important;
+  bottom:18px !important;
+  z-index:99999 !important;
+}
+
+/* Home chat list: last chat must never sit underneath the bottom navigation. */
+#homePage #chatList{
+  padding-bottom:170px !important;
+  scroll-padding-bottom:170px !important;
+  box-sizing:border-box !important;
+  overscroll-behavior-y:contain !important;
+}
+
+/* Friends page has the same safe bottom space as the chat list. */
+#friendsPage{
+  padding-bottom:170px !important;
+  scroll-padding-bottom:170px !important;
+}
+#friendsPage .premium-friends-list{
+  padding-bottom:20px !important;
+}
+
+/* Settings: every card/button must be reachable above the nav. */
+#settingsPage{
+  padding-bottom:170px !important;
+  scroll-padding-top:92px !important;
+  scroll-padding-bottom:170px !important;
+}
+#settingsPage .rs-settings-content{
+  padding-bottom:190px !important;
+}
+
+/* Settings header stays visible while its page scrolls. */
+#settingsPage.rsenger-settings-page .rs-settings-header{
+  position:sticky !important;
+  top:0 !important;
+  z-index:100 !important;
+  flex:0 0 auto !important;
+}
+
+/* Search result filtering should not leave stale spacing/hidden cards. */
+#friendsPage .premium-friend-card.rs-friend-search-hidden{
+  display:none !important;
+}
+</style>
+
+<script id="rsenger-v5-friend-search-fix">
+(function(){
+  'use strict';
+
+  /* The previous build had an oninput="filterFriends()" handler but no
+     reliable global filterFriends implementation. Keep it independent of
+     Firebase so it works immediately on the already-rendered friend list. */
+  window.filterFriends = function(){
+    const input = document.getElementById('friendsSearchInput');
+    const list = document.getElementById('friendsList');
+    if(!input || !list) return;
+
+    const query = String(input.value || '').trim().toLowerCase();
+    const cards = Array.from(list.querySelectorAll('.premium-friend-card, .friend-card'));
+
+    let visible = 0;
+    cards.forEach(function(card){
+      const text = String(card.textContent || '').toLowerCase();
+      const show = !query || text.indexOf(query) !== -1;
+      card.classList.toggle('rs-friend-search-hidden', !show);
+      if(show) visible++;
+    });
+
+    /* Do not hide the normal empty-state when there are no query results;
+       instead show a small search-specific state. */
+    let empty = list.querySelector('.rs-friend-search-empty');
+    if(query && cards.length && visible === 0){
+      if(!empty){
+        empty = document.createElement('div');
+        empty.className = 'rs-friend-search-empty';
+        empty.innerHTML = '<div style="text-align:center;padding:34px 18px;color:#8b97ad"><div style="font-size:28px;margin-bottom:8px">⌕</div><strong style="display:block;color:#e8edf8;margin-bottom:5px">No matching friend</strong><span>Try another name or username.</span></div>';
+        list.appendChild(empty);
+      }
+      empty.style.display = 'block';
+    }else if(empty){
+      empty.style.display = 'none';
+    }
+  };
+
+  /* Re-apply filtering after Firebase replaces the friend-list HTML. */
+  function bindFriendListObserver(){
+    const list = document.getElementById('friendsList');
+    if(!list || list.__rsV5Observer) return;
+    list.__rsV5Observer = new MutationObserver(function(){
+      const input = document.getElementById('friendsSearchInput');
+      if(input && input.value) window.filterFriends();
+    });
+    list.__rsV5Observer.observe(list,{childList:true,subtree:true});
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    bindFriendListObserver();
+    const input = document.getElementById('friendsSearchInput');
+    if(input) input.addEventListener('input', window.filterFriends);
+  });
+
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.closest && e.target.closest('[onclick*="showFriends"]')){
+      setTimeout(bindFriendListObserver,100);
+    }
+  });
+})();
+</script>
 </body>
 </html>
