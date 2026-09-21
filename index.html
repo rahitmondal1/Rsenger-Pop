@@ -54783,5 +54783,242 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
 })();
 </script>
+
+
+<style id="rsenger-v7-ultra-premium">
+/* =========================================================
+   RSENGER V7 — ULTRA PREMIUM VISUAL SYSTEM
+   Visual-only layer: keeps existing Firebase/app logic intact.
+   ========================================================= */
+:root{
+  --rs-violet:#8b5cf6;
+  --rs-cyan:#22d3ee;
+  --rs-blue:#60a5fa;
+  --rs-bg:#05060c;
+  --rs-panel:rgba(12,14,26,.72);
+  --rs-panel-strong:rgba(16,18,32,.88);
+  --rs-line:rgba(255,255,255,.09);
+  --rs-line-soft:rgba(255,255,255,.055);
+  --rs-text:#f7f8ff;
+  --rs-muted:#9aa4bd;
+  --rs-ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--rs-bg)}
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(139,92,246,.10),transparent 34%),
+    radial-gradient(circle at 100% 70%,rgba(34,211,238,.06),transparent 30%),
+    var(--rs-bg);
+  color:var(--rs-text);
+}
+.app{isolation:isolate;background:transparent}
+
+/* Smooth screen arrival — no layout changes, only opacity/transform. */
+.screen:not(.hidden){animation:rsV7ScreenIn .52s var(--rs-ease) both}
+@keyframes rsV7ScreenIn{from{opacity:0;transform:translateY(8px) scale(.992)}to{opacity:1;transform:none}}
+
+/* Ambient premium film over normal screens. */
+#homePage,#profilePage,#friendsPage,#requestsPage,#notificationsPage,#settingsPage,#chainPage,#chatPage,
+#rsengerGroupPage,#rsengerAdminPanel,#rsengerMessageControlPage,
+#rsengerRestrictedMembersPage,#rsengerGroupAdminsPage,#rsengerPinnedMessagesPage{
+  background:
+    radial-gradient(circle at 92% 0%,rgba(139,92,246,.085),transparent 28%),
+    radial-gradient(circle at 0% 58%,rgba(34,211,238,.045),transparent 27%),
+    linear-gradient(180deg,rgba(7,8,17,.985),rgba(4,5,11,.995));
+}
+#homePage::before,#profilePage::before,#friendsPage::before,#requestsPage::before,#notificationsPage::before,#settingsPage::before,#chainPage::before,#chatPage::before{
+  content:"";position:absolute;inset:-20%;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle at 50% 10%,rgba(139,92,246,.055),transparent 24%);
+  animation:rsV7Breath 9s ease-in-out infinite alternate;
+}
+@keyframes rsV7Breath{from{opacity:.55;transform:scale(.96)}to{opacity:1;transform:scale(1.04)}}
+
+/* Premium text hierarchy */
+.auth-header h1,.rs-settings-header h1,.screen h1,.screen h2{
+  letter-spacing:-.025em;
+}
+.auth-header p,.account-text,.rs-setting-copy small,.rs-settings-section-title{color:var(--rs-muted)}
+
+/* Auth — luxurious glass surface */
+#loginPage,#registerPage{background:
+  radial-gradient(circle at 50% 10%,rgba(139,92,246,.14),transparent 35%),
+  radial-gradient(circle at 90% 75%,rgba(34,211,238,.06),transparent 28%),#05060c;}
+#loginPage .auth-header,#registerPage .auth-header{position:relative}
+#loginPage .app-logo,#registerPage .app-logo{
+  border:1px solid rgba(255,255,255,.14)!important;
+  background:linear-gradient(145deg,rgba(139,92,246,.32),rgba(34,211,238,.16))!important;
+  box-shadow:0 14px 44px rgba(89,57,180,.28),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  transform:translateZ(0);
+}
+#loginPage .form-box,#registerPage .form-box{
+  position:relative;padding:18px!important;border:1px solid var(--rs-line)!important;
+  border-radius:26px!important;background:linear-gradient(145deg,rgba(18,20,35,.72),rgba(8,9,18,.62))!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.055)!important;
+  backdrop-filter:blur(24px) saturate(1.25);-webkit-backdrop-filter:blur(24px) saturate(1.25);
+}
+#loginPage .field,#registerPage .field{
+  border:1px solid rgba(255,255,255,.075)!important;
+  background:rgba(255,255,255,.035)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+  transition:border-color .25s var(--rs-ease),box-shadow .25s var(--rs-ease),background .25s var(--rs-ease),transform .25s var(--rs-ease)!important;
+}
+#loginPage .field:focus-within,#registerPage .field:focus-within{
+  border-color:rgba(139,92,246,.48)!important;background:rgba(139,92,246,.055)!important;
+  box-shadow:0 0 0 4px rgba(139,92,246,.07),0 12px 28px rgba(0,0,0,.18)!important;
+  transform:translateY(-1px);
+}
+.main-btn,.google-login,.premium-google{
+  transition:transform .2s var(--rs-ease),box-shadow .2s var(--rs-ease),filter .2s ease!important;
+}
+.main-btn{
+  box-shadow:0 14px 34px rgba(105,72,210,.25),inset 0 1px 0 rgba(255,255,255,.13)!important;
+}
+.main-btn:hover,.google-login:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.main-btn:active,.google-login:active{transform:translateY(0) scale(.985)!important}
+
+/* Buttons and icon buttons get a consistent premium physical feel. */
+button{font-family:inherit}
+button:not(:disabled){transition:transform .18s var(--rs-ease),filter .18s ease,box-shadow .18s ease}
+.menu-btn,.premium-icon-btn,.control-icon,.premium-back-btn,.action-arrow{
+  border:1px solid rgba(255,255,255,.075)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.menu-btn:hover,.premium-icon-btn:hover,.control-icon:hover,.premium-back-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.28),0 0 18px rgba(139,92,246,.10)!important}
+
+/* Bottom navigation — floating glass dock. */
+#globalBottomNav{
+  height:74px!important;min-height:74px!important;padding:7px!important;gap:5px!important;
+  border:1px solid rgba(255,255,255,.105)!important;
+  border-radius:25px!important;
+  background:linear-gradient(145deg,rgba(20,22,39,.82),rgba(7,8,17,.80))!important;
+  box-shadow:0 20px 55px rgba(0,0,0,.55),0 0 0 1px rgba(139,92,246,.035),inset 0 1px 0 rgba(255,255,255,.09)!important;
+  backdrop-filter:blur(28px) saturate(1.45)!important;-webkit-backdrop-filter:blur(28px) saturate(1.45)!important;
+}
+#globalBottomNav button{
+  position:relative!important;overflow:hidden!important;border-radius:18px!important;
+  background:transparent!important;border:1px solid transparent!important;
+  color:#7f89a5!important;transition:color .25s var(--rs-ease),transform .25s var(--rs-ease),background .25s var(--rs-ease)!important;
+}
+#globalBottomNav button::after{
+  content:"";position:absolute;left:50%;bottom:5px;width:4px;height:4px;border-radius:50%;
+  background:linear-gradient(90deg,var(--rs-violet),var(--rs-cyan));opacity:0;transform:translateX(-50%) scale(.4);transition:.25s var(--rs-ease);
+  box-shadow:0 0 12px rgba(34,211,238,.6);
+}
+#globalBottomNav button:hover{color:#dfe4ff!important;background:rgba(255,255,255,.045)!important;transform:translateY(-2px)}
+#globalBottomNav button.rs-v7-active{color:#fff!important;background:linear-gradient(145deg,rgba(139,92,246,.18),rgba(34,211,238,.08))!important;border-color:rgba(255,255,255,.07)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 24px rgba(0,0,0,.18)!important}
+#globalBottomNav button.rs-v7-active::after{opacity:1;transform:translateX(-50%) scale(1)}
+#globalBottomNav svg{filter:drop-shadow(0 0 8px rgba(139,92,246,.12));transition:transform .25s var(--rs-ease),filter .25s ease}
+#globalBottomNav button.rs-v7-active svg{transform:scale(1.08);filter:drop-shadow(0 0 10px rgba(34,211,238,.25))}
+
+/* Cards/lists — depth without changing dimensions aggressively. */
+.rs-setting-card,.rsenger-admin-card,.rs-ac-card,.premium-search-card,.premium-chat-list-item,
+.premium-profile-action,.notification-item,.request-card,.friend-card{
+  border-color:rgba(255,255,255,.075)!important;
+  background:linear-gradient(145deg,rgba(20,22,38,.72),rgba(9,10,19,.66))!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.045)!important;
+  transition:transform .24s var(--rs-ease),border-color .24s ease,box-shadow .24s ease,background .24s ease!important;
+}
+.rs-setting-card:hover,.rsenger-admin-card:hover,.rs-ac-card:hover,.premium-search-card:hover,.premium-chat-list-item:hover,.premium-profile-action:hover{
+  transform:translateY(-2px);border-color:rgba(139,92,246,.18)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.27),0 0 24px rgba(139,92,246,.045),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+
+/* Search bars / text inputs across the app. */
+input,textarea,select{font-family:inherit}
+.friends-search,.premium-search-user,.rs-chain-field,.edit-field{
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.friends-search input,.edit-input,.rs-chain-input,.rs-chain-textarea{
+  transition:border-color .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+.friends-search input:focus,.edit-input:focus,.rs-chain-input:focus,.rs-chain-textarea:focus{
+  border-color:rgba(139,92,246,.45)!important;box-shadow:0 0 0 4px rgba(139,92,246,.065),0 12px 30px rgba(0,0,0,.18)!important;
+}
+
+/* Message bubbles: glass depth and subtle arrival. */
+#messages .message-bubble,.message-bubble{
+  box-shadow:0 8px 24px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#messages .message-bubble{transition:transform .2s var(--rs-ease),filter .2s ease}
+#messages .message-bubble:active{transform:scale(.985)}
+
+/* Premium popups and overlays. */
+.premium-popup-overlay,.premium-alert-overlay,.message-overlay,.edit-message-overlay,.photo-viewer{
+  background:rgba(2,3,8,.58)!important;backdrop-filter:blur(22px) saturate(1.2)!important;-webkit-backdrop-filter:blur(22px) saturate(1.2)!important;
+}
+.premium-popup,.premium-alert-box,.edit-profile-modal,.message-menu,.attachment-menu{
+  background:linear-gradient(145deg,rgba(24,26,44,.94),rgba(8,9,18,.94))!important;
+  border:1px solid rgba(255,255,255,.105)!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(28px) saturate(1.25);-webkit-backdrop-filter:blur(28px) saturate(1.25);
+}
+
+/* Splash — make the first impression richer while retaining the existing logo/brand. */
+#splashPage{background:
+  radial-gradient(circle at 50% 40%,rgba(139,92,246,.25),rgba(34,211,238,.075) 25%,transparent 48%),
+  radial-gradient(circle at 10% 80%,rgba(34,211,238,.075),transparent 28%),
+  radial-gradient(circle at 90% 15%,rgba(139,92,246,.10),transparent 30%),#05060c!important;}
+#splashPage .logo-box{box-shadow:0 0 36px rgba(139,92,246,.38),0 0 90px rgba(34,211,238,.12),inset 0 1px 0 rgba(255,255,255,.16)!important}
+#splashPage .rs-tag{opacity:.82;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+#splashPage::after{filter:blur(.15px);}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+@media (max-width:390px){
+  #globalBottomNav{left:12px!important;right:12px!important;bottom:12px!important;border-radius:22px!important}
+  #homePage,#profilePage,#friendsPage,#requestsPage,#notificationsPage,#settingsPage{padding-bottom:108px!important}
+}
+</style>
+
+<script id="rsenger-v7-ultra-premium-behavior">
+(function(){
+  'use strict';
+  var nav=document.getElementById('globalBottomNav');
+  function refreshIcons(){try{if(window.lucide)lucide.createIcons();}catch(e){}}
+  function activeNav(){
+    if(!nav)return;
+    var map={
+      homePage:'Home',friendsPage:'Friends',chainPage:'Chain',notificationsPage:'Notifications',settingsPage:'Settings'
+    };
+    var visible='';
+    Object.keys(map).some(function(id){var el=document.getElementById(id);if(el&&!el.classList.contains('hidden')){visible=id;return true}return false});
+    Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b){b.classList.remove('rs-v7-active')});
+    if(!visible)return;
+    Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b){
+      var label=(b.getAttribute('aria-label')||'').toLowerCase();
+      if(label===String(map[visible]||'').toLowerCase())b.classList.add('rs-v7-active');
+    });
+  }
+  function observePages(){
+    var targets=['homePage','friendsPage','requestsPage','notificationsPage','settingsPage','chainPage','profilePage','chatPage','rsengerGroupPage'];
+    targets.forEach(function(id){var el=document.getElementById(id);if(el&&!el.__rsV7Observer){el.__rsV7Observer=new MutationObserver(activeNav);el.__rsV7Observer.observe(el,{attributes:true,attributeFilter:['class']})}});
+    activeNav();refreshIcons();
+  }
+  function ripple(e){
+    var b=e.target&&e.target.closest?e.target.closest('button,.main-btn,.google-login,.premium-icon-btn'):null;
+    if(!b||b.disabled)return;
+    var r=document.createElement('span');r.className='rs-v7-ripple';
+    var rect=b.getBoundingClientRect(),x=(e.clientX||rect.left+rect.width/2)-rect.left,y=(e.clientY||rect.top+rect.height/2)-rect.top;
+    r.style.left=x+'px';r.style.top=y+'px';b.appendChild(r);setTimeout(function(){r.remove()},520);
+  }
+  function install(){
+    observePages();
+    document.addEventListener('click',function(e){ripple(e);setTimeout(activeNav,35)},true);
+    window.addEventListener('pageshow',function(){setTimeout(observePages,50)});
+    setInterval(activeNav,900);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+<style id="rsenger-v7-ripple">
+.rs-v7-ripple{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.28);transform:translate(-50%,-50%) scale(1);animation:rsV7Ripple .52s ease-out forwards;z-index:99}
+@keyframes rsV7Ripple{to{opacity:0;transform:translate(-50%,-50%) scale(22)}}
+</style>
+
 </body>
 </html>
