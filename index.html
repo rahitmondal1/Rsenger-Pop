@@ -42833,6 +42833,10 @@ async function renderRsengerGroupMessages(snapshot){
     }
 
 
+    const distanceFromBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight;
+    const shouldStickToBottom = distanceFromBottom < 120 || !container.children.length;
+
     container.innerHTML = html;
 
     refreshRsengerPinnedTop();
@@ -42985,8 +42989,11 @@ async function renderRsengerGroupMessages(snapshot){
     }
 
 
-    container.scrollTop =
-        container.scrollHeight;
+    if(shouldStickToBottom){
+        requestAnimationFrame(function(){
+            container.scrollTop = container.scrollHeight;
+        });
+    }
 
 }
 
@@ -44142,10 +44149,9 @@ if(selectedRsengerGroupPhoto){
         }
 
             
-                    // Refresh group messages immediately
-        if(typeof loadRsengerGroup === "function"){
-            loadRsengerGroup();
-        }
+                    // Firestore onSnapshot already receives the new message.
+        // Do NOT restart the listener here; doing so rebuilt the whole chat
+        // and caused the visible "jump/shake" after every send.
 
         // Scroll to latest message
         setTimeout(function(){
@@ -54403,6 +54409,10 @@ async function rsLogoutAll(){const ok=await premiumConfirm({title:'Logout from a
 })();
 </script>
 <style id="rs-final-auth-style">
+.rs-final-email-check{display:none;align-items:center;gap:11px;margin:10px 0 14px;padding:12px 13px;border-radius:16px;background:linear-gradient(135deg,rgba(119,88,238,.10),rgba(40,171,199,.08));border:1px solid rgba(119,88,238,.16);box-shadow:0 10px 28px rgba(15,23,42,.07)}
+.rs-final-email-check.show{display:flex;animation:rsFinalIn .22s ease}
+.rs-final-email-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:rgba(119,88,238,.13);font-size:18px;flex:0 0 auto}
+.rs-final-email-check b{display:block;font-size:12px;font-weight:850;margin-bottom:3px}.rs-final-email-check span{display:block;font-size:10.5px;line-height:1.45;opacity:.68}
 .rs-final-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:5px;margin:0 0 17px;border-radius:18px;background:rgba(100,116,139,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .rs-final-method{border:0;border-radius:14px;min-height:44px;padding:9px 5px;background:transparent;color:inherit;font-weight:800;font-size:12px;cursor:pointer;transition:all .22s ease}
 .rs-final-method.active{background:linear-gradient(135deg,#7758ee,#28abc7)!important;color:#fff!important;box-shadow:0 9px 24px rgba(105,81,226,.28)!important;transform:translateY(-1px)}
@@ -54412,35 +54422,104 @@ async function rsLogoutAll(){const ok=await premiumConfirm({title:'Logout from a
 </style>
 <script id="rs-final-auth-script">
 (function(){
-'use strict';
-const S={mode:'email',loginVerified:false,loginPhoneUser:null,loginData:null,loginConfirmation:null,registerVerified:false,registerPhoneUser:null,registerConfirmation:null,timer:null,recaptcha:null,hold:false};
 const $=id=>document.getElementById(id);
-const msg=(m,t='Rsenger',type='error')=>{if(typeof premiumAlert==='function')premiumAlert(m,t,type);else window.alert(m)};
-const phoneNorm=v=>{let s=String(v||'').trim();if(/^\+\d{8,15}$/.test(s))return s;let d=s.replace(/\D/g,'');if(d.length===10)return '+91'+d;return d?('+'+d):''};
-const emailOk=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim());
-const methodOf=form=>{const b=form&&form.querySelector('.rs-final-method.active');return b?b.dataset.mode:'email'};
-function installHomeGuard(){if(typeof window.openHomeAfterSplash==='function'&&!window.__rsFinalHomeGuard){const original=window.openHomeAfterSplash;window.__rsFinalHomeGuard=function(user){if(S.hold){return}return original.apply(this,arguments)};window.openHomeAfterSplash=window.__rsFinalHomeGuard}}
-function clearTimer(){if(S.timer){clearInterval(S.timer);S.timer=null}}
-function startTimer(box,resendFn){clearTimer();let n=60;const c=box.querySelector('.rs-final-count'),r=box.querySelector('.rs-final-resend');r.disabled=true;const tick=()=>{c.textContent=n>0?'Resend available in '+n+'s':'You can request a new code now';if(n<=0){clearTimer();r.disabled=false}};tick();S.timer=setInterval(()=>{n--;tick()},1000);r.onclick=()=>{if(!r.disabled)resendFn()}}
-function makeOtp(id){let old=$(id);if(old)old.remove();const w=document.createElement('div');w.id=id;w.className='rs-final-otp';w.innerHTML='<div class="rs-final-otp-title">Enter the 6-digit verification code</div><div class="rs-final-boxes">'+[0,1,2,3,4,5].map(i=>'<input class="rs-final-box" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Verification digit '+(i+1)+'">').join('')+'</div><div class="rs-final-otp-meta"><span class="rs-final-count">Code required</span><button type="button" class="rs-final-resend" disabled>Resend code</button></div><div class="rs-final-status"></div>';const boxes=[...w.querySelectorAll('.rs-final-box')];boxes.forEach((b,i)=>{b.addEventListener('input',()=>{b.value=b.value.replace(/\D/g,'').slice(0,1);if(b.value&&i<5)boxes[i+1].focus()});b.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!b.value&&i>0)boxes[i-1].focus()});b.addEventListener('paste',e=>{const v=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);if(v){e.preventDefault();boxes.forEach((x,j)=>x.value=v[j]||'');boxes[Math.min(v.length,6)-1]?.focus()}})});return w}
-function code(otp){return [...otp.querySelectorAll('.rs-final-box')].map(x=>x.value).join('')}
-function status(otp,text,ok){const s=otp.querySelector('.rs-final-status');s.textContent=text;s.className='rs-final-status '+(ok?'ok':'err')}
-function hideOtp(otp){if(!otp)return;otp.classList.remove('show');otp.querySelectorAll('.rs-final-box').forEach(x=>x.value='');status(otp,'',false)}
-function addVerify(input,handler){if(!input)return null;let field=input.closest('.field');if(!field)return null;let row=field.parentElement.closest('.rs-final-input-row');if(!row){row=document.createElement('div');row.className='rs-final-input-row';field.parentNode.insertBefore(row,field);row.appendChild(field)}let b=row.querySelector('.rs-final-verify');if(!b){b=document.createElement('button');b.type='button';b.className='rs-final-verify';b.textContent='Verify';row.appendChild(b)}b.onclick=handler;return b}
-function recaptchaFor(button){try{if(S.recaptcha){S.recaptcha.clear();S.recaptcha=null}}catch(e){}if(!button.id)button.id='rs-final-phone-verify';try{S.recaptcha=new firebase.auth.RecaptchaVerifier(button.id,{size:'invisible',callback:function(){},'expired-callback':function(){}});return S.recaptcha}catch(e){console.error(e);return null}}
-async function sendPhone(phone,otp,button,which){const p=phoneNorm(phone);if(!/^\+\d{8,15}$/.test(p))throw new Error('Enter a valid phone number, for example +91XXXXXXXXXX.');S.hold=true;const verifier=recaptchaFor(button);if(!verifier)throw new Error('Phone verification could not initialize. Please reload Rsenger.');try{const cr=await auth.signInWithPhoneNumber(p,verifier);if(which==='login'){S.loginConfirmation=cr;S.loginVerified=false}else{S.registerConfirmation=cr;S.registerVerified=false}try{await auth.signOut()}catch(e){}otp.classList.add('show');otp.querySelector('.rs-final-box').focus();status(otp,'Verification code sent by SMS.',true);startTimer(otp,()=>sendPhone(phone,otp,button,which).catch(e=>status(otp,e.message||'Could not resend the code.')))}catch(e){try{verifier.clear()}catch(x){}S.recaptcha=null;if(e&&e.code==='auth/billing-not-enabled'){throw new Error('Firebase Phone SMS is not enabled for this project yet. Enable the Firebase Blaze billing plan for real SMS verification, then try again. You can still use a Firebase test phone number for testing.')}throw e}}
-async function confirmPhone(otp,which){const c=code(otp);if(!/^\d{6}$/.test(c)){status(otp,'Enter all 6 digits.');return false}const cr=which==='login'?S.loginConfirmation:S.registerConfirmation;if(!cr){status(otp,'Tap Verify to request a new code.');return false}try{S.hold=true;const result=await cr.confirm(c);if(which==='login'){S.loginPhoneUser=result.user;S.loginVerified=true}else{S.registerPhoneUser=result.user;S.registerVerified=true}await auth.signOut();clearTimer();otp.querySelector('.rs-final-resend').disabled=true;status(otp,'Phone number verified successfully.',true);return true}catch(e){status(otp,'Incorrect or expired code. Please try again.');return false}}
-async function findUsername(username){const u=String(username||'').trim().replace(/^@/,'').toLowerCase();if(!u)throw new Error('Enter your username first.');let q=await db.collection('users').where('username','==',u).limit(1).get();if(q.empty){throw new Error('No Rsenger account was found with that username. Please check the username exactly.')}const doc=q.docs[0];return {id:doc.id,data:doc.data()||{}}}
-async function sendEmailVerify(email,password){S.hold=true;try{const c=await auth.signInWithEmailAndPassword(email,password);await c.user.reload();if(c.user.emailVerified)return true;await c.user.sendEmailVerification();return false}finally{try{await auth.signOut()}catch(e){}S.hold=false}}
-async function loginWithCredential(data,password){const authEmail=(data&&data.loginEmail)||((data&&data.email)||'').toLowerCase();if(!authEmail)throw new Error('This account does not have a login credential yet.');S.hold=false;const c=await auth.signInWithEmailAndPassword(authEmail,password);if(c.user.email&&!String(c.user.email).endsWith('@rsenger-phone.local')){await c.user.reload();if(!c.user.emailVerified){try{await c.user.sendEmailVerification()}catch(e){}await auth.signOut();throw new Error('Verify your email first. Check your inbox, then log in again.')}}try{await db.collection('users').doc(c.user.uid).set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp(),online:true},{merge:true})}catch(e){}return c.user}
-function markVerified(btn){if(!btn)return;btn.textContent='Verified';btn.classList.add('verified');btn.disabled=true}
-function setupLogin(){const page=$('loginPage'),form=page&&page.querySelector('.form-box');if(!form)return;form.querySelectorAll('.rs-final-methods').forEach(x=>x.remove());const old=form.querySelector('.rs-auth-methods');if(old)old.remove();const tabs=document.createElement('div');tabs.className='rs-final-methods';tabs.innerHTML='<button type="button" class="rs-final-method active" data-mode="email">Email</button><button type="button" class="rs-final-method" data-mode="phone">Phone Number</button><button type="button" class="rs-final-method" data-mode="username">Username</button>';form.insertBefore(tabs,form.firstElementChild);const input=$('loginEmail'),pw=$('loginPassword'),loginBtn=form.querySelector('.main-btn');const otp=makeOtp('rsFinalLoginOtp');const pwField=pw.closest('.field');pwField.parentNode.insertBefore(otp,pwField);const verify=addVerify(input,async()=>{const m=S.mode;const id=input.value.trim();if(m==='email'){if(!emailOk(id))return msg('Enter a valid email address.','Email verification');if(!pw.value)return msg('Enter your password first, then tap Verify.','Email verification');try{const already=await sendEmailVerify(id.toLowerCase(),pw.value);if(already){S.loginVerified=true;markVerified(verify);return msg('Your email is already verified.','Email verification','success')}msg('Verification email sent. Open it, verify your email, then tap Verify again.','Email verification','success')}catch(e){msg(e.message||'Could not send the verification email.','Email verification')}}else if(m==='phone'){if(S.loginVerified)return;try{if(!S.loginConfirmation){await sendPhone(id,otp,verify,'login')}else{if(await confirmPhone(otp,'login'))markVerified(verify)}}catch(e){msg(e.message||'Could not send the SMS code.','Phone verification')}}else{try{const found=await findUsername(id);S.loginData=found.data;const d=found.data;if(d.phone){if(!S.loginConfirmation)await sendPhone(d.phone,otp,verify,'login');else if(await confirmPhone(otp,'login'))markVerified(verify)}else if(d.email){if(!pw.value)return msg('Enter your password first, then tap Verify.','Username verification');const already=await sendEmailVerify(String(d.loginEmail||d.email).toLowerCase(),pw.value);if(already){S.loginVerified=true;markVerified(verify);return msg('The linked email is already verified.','Username verification','success')}msg('A verification email was sent to the linked email. Verify it, then tap Verify again.','Username verification','success')}else throw new Error('This account has no linked verification method.')}catch(e){msg(e.message||'Could not start username verification.','Username verification')}}});
-function setMode(m){S.mode=m;S.loginVerified=false;S.loginConfirmation=null;S.loginPhoneUser=null;S.loginData=null;hideOtp(otp);clearTimer();verify.textContent='Verify';verify.classList.remove('verified');verify.disabled=false;input.value='';input.placeholder=m==='email'?'Email Address':m==='phone'?'Phone Number':'Username';input.type=m==='email'?'email':'text';tabs.querySelectorAll('.rs-final-method').forEach(b=>{const active=b.dataset.mode===m;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false')})}tabs.querySelectorAll('.rs-final-method').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));setMode('email');
-loginBtn.type='button';loginBtn.onclick=async e=>{e.preventDefault();const id=input.value.trim(),password=pw.value;if(!id)return msg('Enter your '+(S.mode==='email'?'email address':S.mode==='phone'?'phone number':'username')+'.','Login');if(!password)return msg('Enter your password.','Login');try{if(S.mode==='email'){if(!S.loginVerified)return msg('Please verify your email first. Tap Verify beside the email box.','Email verification');const u=await loginWithCredential({loginEmail:id.toLowerCase(),email:id.toLowerCase()},password);if(typeof showHome==='function')showHome()}else if(S.mode==='phone'){if(!S.loginVerified){return msg('Please verify your phone number first. Tap Verify and enter the 6-digit SMS code.','Phone verification')}let d=S.loginData;if(!d){const q=await db.collection('users').where('phone','==',phoneNorm(id)).limit(1).get();if(q.empty)throw new Error('No Rsenger account was found with that phone number.');d=q.docs[0].data()||{}}await loginWithCredential(d,password);if(typeof showHome==='function')showHome()}else{let d=S.loginData;if(!d){const f=await findUsername(id);d=f.data}if(!S.loginVerified)return msg('Please verify the linked phone/email first. Tap Verify beside the username box.','Username verification');await loginWithCredential(d,password);if(typeof showHome==='function')showHome()}}catch(e){try{if(auth.currentUser)await auth.signOut()}catch(x){}S.hold=false;msg(e.message||'Login failed.','Login')}}}
-function setupRegister(){const page=$('registerPage'),form=page&&page.querySelector('.form-box');if(!form)return;form.querySelectorAll('.rs-final-methods').forEach(x=>x.remove());const old=form.querySelector('.rs-auth-methods');if(old)old.remove();const tabs=document.createElement('div');tabs.className='rs-final-methods';tabs.style.gridTemplateColumns='repeat(2,1fr)';tabs.innerHTML='<button type="button" class="rs-final-method active" data-mode="email">Email</button><button type="button" class="rs-final-method" data-mode="phone">Phone Number</button>';form.insertBefore(tabs,form.firstElementChild);const name=$('name'),username=$('username'),email=$('email'),phone=$('phone'),pass=$('password'),confirm=$('confirmPassword'),btn=form.querySelector('.main-btn');const emailField=email.closest('.field'),phoneField=phone.closest('.field');const otp=makeOtp('rsFinalRegisterOtp');confirm.closest('.field').parentNode.insertBefore(otp,confirm.closest('.field'));const ve=addVerify(email,async()=>{const em=email.value.trim().toLowerCase();if(!emailOk(em))return msg('Enter a valid email address.','Email verification');if(!pass.value)return msg('Enter your password first, then tap Verify.','Email verification');try{const already=await sendEmailVerify(em,pass.value);if(already){S.registerVerified=true;markVerified(ve);return msg('Your email is already verified.','Email verification','success')}msg('Verification email sent. Open it, verify your email, then tap Verify again.','Email verification','success')}catch(e){msg(e.message||'Could not send the verification email.','Email verification')}});const vp=addVerify(phone,async()=>{try{if(!S.registerConfirmation)await sendPhone(phone.value,otp,vp,'register');else if(await confirmPhone(otp,'register'))markVerified(vp)}catch(e){msg(e.message||'Could not send the SMS code.','Phone verification')}});
-function mode(m){S.mode=m;S.registerVerified=false;S.registerConfirmation=null;S.registerPhoneUser=null;hideOtp(otp);clearTimer();emailField.style.display=m==='email'?'':'none';phoneField.style.display=m==='phone'?'':'none';ve.style.display=m==='email'?'':'none';vp.style.display=m==='phone'?'':'none';tabs.querySelectorAll('.rs-final-method').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));}tabs.querySelectorAll('.rs-final-method').forEach(b=>b.onclick=()=>mode(b.dataset.mode));mode('email');
-btn.type='button';btn.onclick=async e=>{e.preventDefault();const n=name.value.trim(),un=username.value.trim().replace(/^@/,'').toLowerCase(),p=pass.value,p2=confirm.value;if(!n||!un||!p||!p2)return msg('Please fill all required fields.','Create account');if(!/^[a-z0-9._]{3,30}$/.test(un))return msg('Username can use 3–30 letters, numbers, dots or underscores.','Username');if(p.length<8||p.length>16)return msg('Password must be 8–16 characters.','Password');if(p!==p2)return msg('The passwords do not match.','Password');try{const uq=await db.collection('users').where('username','==',un).limit(1).get();if(!uq.empty)throw new Error('This username is already taken.');if(S.mode==='email'){const em=email.value.trim().toLowerCase();if(!emailOk(em))throw new Error('Enter a valid email address.');if(!S.registerVerified)return msg('Please verify your email first. Tap Verify beside the email box, complete the verification email, then tap Verify again.','Email verification');S.hold=true;const c=await auth.createUserWithEmailAndPassword(em,p);try{await db.collection('users').doc(c.user.uid).set({name:n,username:un,email:em,phone:'',loginEmail:em,passwordFingerprint:await hashPassword(p),accountMethod:'email',emailVerified:true,bio:'',profilePic:'',online:true,createdAt:firebase.firestore.FieldValue.serverTimestamp(),lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}finally{S.hold=false}if(typeof showHome==='function')showHome()}else{const ph=phoneNorm(phone.value);if(!/^\+\d{8,15}$/.test(ph))throw new Error('Enter a valid phone number with country code.');if(!S.registerVerified)return msg('Please verify your phone first. Tap Verify beside the phone box and enter the 6-digit SMS code.','Phone verification');const pq=await db.collection('users').where('phone','==',ph).get();if(pq.size>=5)throw new Error('This mobile number has reached the 5-account limit.');S.hold=true;const internal='rsenger-phone.local',ae='phone_'+btoa(ph).replace(/[^a-zA-Z0-9]/g,'')+'_'+Date.now()+'@'+internal;const c=await auth.createUserWithEmailAndPassword(ae,p);try{await db.collection('users').doc(c.user.uid).set({name:n,username:un,email:'',phone:ph,loginEmail:ae,passwordFingerprint:await hashPassword(p),accountMethod:'phone',phoneVerified:true,bio:'',profilePic:'',online:true,createdAt:firebase.firestore.FieldValue.serverTimestamp(),lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}finally{S.hold=false}if(typeof showHome==='function')showHome()}}catch(e){S.hold=false;try{if(auth.currentUser)await auth.signOut()}catch(x){}msg(e.message||'Could not create account.','Create account')}}}
-function boot(){try{installHomeGuard();setupLogin();setupRegister();if(window.lucide)lucide.createIcons()}catch(e){console.error('Rsenger final auth:',e)}}
+const S={mode:'email',loginVerified:false,loginData:null,registerVerified:false,registerPending:null,hold:false};
+function emailOk(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim())}
+function msg(text,title='Rsenger',type='error'){if(typeof premiumAlert==='function')return premiumAlert(text,title,type==='success'?'success':'error');alert(text)}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function markVerified(btn){btn.textContent='Verified';btn.classList.add('verified');btn.disabled=true}
+function addVerify(input,handler){
+  const row=document.createElement('div');row.className='rs-final-input-row';
+  input.parentNode.insertBefore(row,input);row.appendChild(input);
+  const b=document.createElement('button');b.type='button';b.className='rs-final-verify';b.textContent='Verify';
+  row.appendChild(b);b.onclick=()=>handler(b);return b;
+}
+function verificationCard(id){
+  let old=$(id);if(old)old.remove();
+  const d=document.createElement('div');d.id=id;d.className='rs-final-email-check';
+  d.innerHTML='<div class="rs-final-email-icon">✉</div><div><b>Check your email</b><span>Open the verification email and tap the verification link. Then return to Rsenger and tap Verify again.</span></div>';
+  return d;
+}
+async function findUsername(username){const u=String(username||'').trim().replace(/^@/,'').toLowerCase();if(!u)throw new Error('Enter your username first.');const q=await db.collection('users').where('username','==',u).limit(1).get();if(q.empty)throw new Error('No Rsenger account was found with that username.');const doc=q.docs[0];return{id:doc.id,data:doc.data()||{}}}
+function authEmailFromData(d){const e=String((d&&d.email)||'').trim().toLowerCase();const le=String((d&&d.loginEmail)||'').trim().toLowerCase();if(emailOk(e))return e;if(emailOk(le)&&!le.endsWith('@rsenger-phone.local'))return le;return ''}
+async function verifyExistingAccount(email,password){
+  if(!emailOk(email))throw new Error('This account does not have a valid linked email address. Add an email to the account first.');
+  if(!password)throw new Error('Enter your password first, then tap Verify.');
+  S.hold=true;
+  try{
+    const c=await auth.signInWithEmailAndPassword(email,password);await c.user.reload();
+    if(c.user.emailVerified)return true;
+    await c.user.sendEmailVerification();return false;
+  }finally{try{await auth.signOut()}catch(e){}S.hold=false}
+}
+async function finishVerifiedLogin(data,password){
+  const email=authEmailFromData(data);if(!email)throw new Error('This account has no linked email for verification. Please add an email address to the account first.');
+  const c=await auth.signInWithEmailAndPassword(email,password);await c.user.reload();
+  if(!c.user.emailVerified){try{await c.user.sendEmailVerification()}catch(e){}await auth.signOut();throw new Error('Verify your email first. Check your inbox, then try Login again.')}
+  try{await db.collection('users').doc(c.user.uid).set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp(),online:true},{merge:true})}catch(e){}
+  return c.user;
+}
+async function setupLogin(){
+ const page=$('loginPage'),form=page&&page.querySelector('.form-box');if(!form)return;
+ form.querySelectorAll('.rs-final-methods').forEach(x=>x.remove());
+ const old=form.querySelector('.rs-auth-methods');if(old)old.remove();
+ const tabs=document.createElement('div');tabs.className='rs-final-methods';tabs.innerHTML='<button type="button" class="rs-final-method active" data-mode="email">Email</button><button type="button" class="rs-final-method" data-mode="phone">Phone Number</button><button type="button" class="rs-final-method" data-mode="username">Username</button>';form.insertBefore(tabs,form.firstElementChild);
+ const input=$('loginEmail'),pw=$('loginPassword'),loginBtn=form.querySelector('.main-btn');
+ let card=verificationCard('rsFinalLoginEmailCard');
+ const pwField=pw.closest('.field');pwField.parentNode.insertBefore(card,pwField);
+ const verify=addVerify(input,async(btn)=>{
+   try{
+    const id=input.value.trim(),password=pw.value;
+    if(S.mode==='email'){
+      if(!emailOk(id))return msg('Enter a valid email address.','Email verification');
+      const already=await verifyExistingAccount(id.toLowerCase(),password);
+      if(already){S.loginVerified=true;markVerified(btn);card.classList.remove('show');return msg('Your email is already verified.','Email verification','success')}
+      S.loginData={email:id.toLowerCase(),loginEmail:id.toLowerCase()};card.classList.add('show');return msg('Verification email sent. Open it, verify your email, then tap Verify again.','Email verification','success');
+    }
+    if(S.mode==='phone'){
+      const ph=String(id).replace(/[^0-9+]/g,'');if(!/^\+\d{8,15}$/.test(ph))return msg('Enter a valid phone number with country code.','Phone verification');
+      const q=await db.collection('users').where('phone','==',ph).limit(1).get();if(q.empty)throw new Error('No Rsenger account was found with that phone number.');
+      const d=q.docs[0].data()||{},email=authEmailFromData(d);if(!email)throw new Error('This phone account has no linked email address. Add an email to the account first, then use Phone Number login.');
+      if(!password)return msg('Enter your password first, then tap Verify.','Email verification');
+      const already=await verifyExistingAccount(email,password);S.loginData=d;
+      if(already){S.loginVerified=true;markVerified(btn);card.classList.remove('show');return msg('Linked email is already verified.','Email verification','success')}
+      card.classList.add('show');return msg('A verification email was sent to the linked email address.','Email verification','success');
+    }
+    const found=await findUsername(id),d=found.data,email=authEmailFromData(d);if(!email)throw new Error('This account has no linked email address for verification.');
+    if(!password)return msg('Enter your password first, then tap Verify.','Email verification');
+    const already=await verifyExistingAccount(email,password);S.loginData=d;
+    if(already){S.loginVerified=true;markVerified(btn);card.classList.remove('show');return msg('Linked email is already verified.','Email verification','success')}
+    card.classList.add('show');return msg('A verification email was sent to the linked email address.','Email verification','success');
+   }catch(e){msg(e.message||'Could not start email verification.','Verification')}
+ });
+ function setMode(m){S.mode=m;S.loginVerified=false;S.loginData=null;verify.textContent='Verify';verify.classList.remove('verified');verify.disabled=false;input.value='';input.placeholder=m==='email'?'Email Address':m==='phone'?'Phone Number':'Username';input.type=m==='email'?'email':'text';card.classList.remove('show');tabs.querySelectorAll('.rs-final-method').forEach(b=>{const a=b.dataset.mode===m;b.classList.toggle('active',a);b.setAttribute('aria-selected',a?'true':'false')})}
+ tabs.querySelectorAll('.rs-final-method').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));setMode('email');
+ loginBtn.type='button';loginBtn.onclick=async e=>{e.preventDefault();const id=input.value.trim(),password=pw.value;if(!id)return msg('Enter your '+(S.mode==='email'?'email address':S.mode==='phone'?'phone number':'username')+'.','Login');if(!password)return msg('Enter your password.','Login');if(!S.loginVerified)return msg('Please verify the linked email first. Tap Verify, open the email verification link, then tap Verify again.','Email verification');try{let d=S.loginData;if(S.mode==='email')d={email:id.toLowerCase(),loginEmail:id.toLowerCase()};else if(!d){d=S.mode==='phone'?(await db.collection('users').where('phone','==',String(id).replace(/[^0-9+]/g,'')).limit(1).get()).docs[0]?.data():(await findUsername(id)).data;if(!d)throw new Error('Account not found.')}await finishVerifiedLogin(d,password);if(typeof showHome==='function')showHome();}catch(e){try{if(auth.currentUser)await auth.signOut()}catch(x){}S.loginVerified=false;msg(e.message||'Login failed.','Login')}}
+}
+async function setupRegister(){
+ const page=$('registerPage'),form=page&&page.querySelector('.form-box');if(!form)return;
+ form.querySelectorAll('.rs-final-methods').forEach(x=>x.remove());const old=form.querySelector('.rs-auth-methods');if(old)old.remove();
+ const tabs=document.createElement('div');tabs.className='rs-final-methods';tabs.style.gridTemplateColumns='1fr';tabs.innerHTML='<button type="button" class="rs-final-method active" data-mode="email">Email verification</button>';form.insertBefore(tabs,form.firstElementChild);
+ const name=$('name'),username=$('username'),email=$('email'),phone=$('phone'),pass=$('password'),confirm=$('confirmPassword'),btn=form.querySelector('.main-btn');
+ const phoneField=phone.closest('.field');if(phoneField){phoneField.style.display='';}
+ const card=verificationCard('rsFinalRegisterEmailCard');confirm.closest('.field').parentNode.insertBefore(card,confirm.closest('.field'));
+ const ve=addVerify(email,async(b)=>{const em=email.value.trim().toLowerCase();if(!emailOk(em))return msg('Enter a valid email address.','Email verification');if(!pass.value)return msg('Enter your password first, then tap Verify.','Email verification');try{const already=await verifyExistingAccount(em,pass.value);if(already){S.registerVerified=true;markVerified(b);card.classList.remove('show');return msg('Your email is already verified.','Email verification','success')}S.registerPending={email:em,password:pass.value};card.classList.add('show');return msg('Verification email sent. Open it, verify your email, then tap Verify again.','Email verification','success')}catch(e){
+   if(e&&e.code==='auth/user-not-found')return msg('This account is not created yet. Fill the form and tap Create Account to create it and receive the verification email.','Create account');
+   msg(e.message||'Could not send verification email.','Email verification')}});
+ ve.style.display='';
+ btn.type='button';btn.onclick=async e=>{e.preventDefault();const n=name.value.trim(),un=username.value.trim().replace(/^@/,'').toLowerCase(),em=email.value.trim().toLowerCase(),p=pass.value,p2=confirm.value;if(!n||!un||!em||!p||!p2)return msg('Please fill all required fields.','Create account');if(!emailOk(em))return msg('Enter a valid email address.','Email');if(!/^[a-z0-9._]{3,30}$/.test(un))return msg('Username can use 3–30 letters, numbers, dots or underscores.','Username');if(p.length<8||p.length>16)return msg('Password must be 8–16 characters.','Password');if(p!==p2)return msg('The passwords do not match.','Password');try{
+   const uq=await db.collection('users').where('username','==',un).limit(1).get();
+   if(!S.registerPending){
+     if(!uq.empty)throw new Error('This username is already taken.');
+     const c=await auth.createUserWithEmailAndPassword(em,p);
+     await db.collection('users').doc(c.user.uid).set({name:n,username:un,email:em,phone:String(phone.value||'').replace(/[^0-9+]/g,''),loginEmail:em,passwordFingerprint:await hashPassword(p),accountMethod:'email',emailVerified:false,bio:'',profilePic:'',online:false,createdAt:firebase.firestore.FieldValue.serverTimestamp(),lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+     await c.user.sendEmailVerification();S.registerPending={email:em,password:p,uid:c.user.uid};await auth.signOut();card.classList.add('show');return msg('Account created. A verification email has been sent. Verify it, then tap Create Account again to enter Rsenger.','Email verification','success');
+   }
+   const pending=S.registerPending;if(pending.email!==em)S.registerPending=null;const c=await auth.signInWithEmailAndPassword(em,p);await c.user.reload();if(!c.user.emailVerified){try{await c.user.sendEmailVerification()}catch(x){}await auth.signOut();return msg('Your email is not verified yet. Check your inbox and tap the verification link.','Email verification')}
+   await db.collection('users').doc(c.user.uid).set({emailVerified:true,online:true,lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});S.registerPending=null;S.registerVerified=true;if(typeof showHome==='function')showHome();
+ }catch(e){S.registerPending=null;try{if(auth.currentUser)await auth.signOut()}catch(x){}msg(e.message||'Could not create account.','Create account')}}
+}
+function boot(){try{setupLogin();setupRegister();if(window.lucide)lucide.createIcons()}catch(e){console.error('Rsenger email verification:',e)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,150));else setTimeout(boot,150);
 })();
 </script>
@@ -54463,6 +54542,53 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   }
   document.addEventListener('DOMContentLoaded',function(){setTimeout(restoreNavIfHome,500);});
   window.addEventListener('pageshow',function(){setTimeout(restoreNavIfHome,250);});
+})();
+</script>
+<script id="rs-final-stability-guard-v4">
+(function(){
+  function restoreHomeChrome(){
+    try{
+      var home=document.getElementById('homePage'), login=document.getElementById('loginPage'), register=document.getElementById('registerPage');
+      if(!home || home.classList.contains('hidden')) return;
+      if(login && !login.classList.contains('hidden')) return;
+      if(register && !register.classList.contains('hidden')) return;
+      if(typeof showBottomNav==='function') showBottomNav();
+      if(typeof showGroupIcon==='function') showGroupIcon();
+      if(window.lucide) lucide.createIcons();
+    }catch(e){console.error('Home chrome guard:',e)}
+  }
+  function hideLoginChrome(){
+    try{
+      var nav=document.getElementById('globalBottomNav'), fab=document.getElementById('rsengerGroupFab');
+      if(typeof hideBottomNav==='function') hideBottomNav();
+      if(nav){nav.style.setProperty('display','none','important');nav.style.setProperty('visibility','hidden','important');nav.style.setProperty('pointer-events','none','important');}
+      if(fab){fab.classList.add('hidden');fab.style.setProperty('display','none','important');fab.style.setProperty('visibility','hidden','important');fab.style.setProperty('opacity','0','important');fab.style.setProperty('pointer-events','none','important');}
+    }catch(e){}
+  }
+  function enforceLoginState(){
+    try{
+      var splash=document.getElementById('splashPage'), login=document.getElementById('loginPage');
+      var splashVisible=splash && getComputedStyle(splash).display!=='none' && !splash.classList.contains('splash-exit');
+      if(auth && !auth.currentUser && login && !splashVisible){
+        if(typeof forceLoginPage==='function') forceLoginPage(); else if(typeof showLogin==='function') showLogin();
+        hideLoginChrome();
+      }else if(auth && auth.currentUser && !splashVisible){
+        restoreHomeChrome();
+      }
+    }catch(e){console.error('Auth stability guard:',e)}
+  }
+  function scheduleHome(){[0,80,300,800,1500].forEach(function(ms){setTimeout(restoreHomeChrome,ms)})}
+  if(typeof window.showHome==='function'){
+    var baseShowHome=window.showHome;
+    window.showHome=function(){var r=baseShowHome.apply(this,arguments);scheduleHome();return r;};
+  }
+  if(typeof window.forceLoginPage==='function'){
+    var baseForceLogin=window.forceLoginPage;
+    window.forceLoginPage=function(){var r=baseForceLogin.apply(this,arguments);hideLoginChrome();return r;};
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(enforceLoginState,900)});
+  window.addEventListener('pageshow',function(){setTimeout(enforceLoginState,250);});
+  try{auth.onAuthStateChanged(function(){setTimeout(enforceLoginState,150);setTimeout(enforceLoginState,700);});}catch(e){}
 })();
 </script>
 </body>
