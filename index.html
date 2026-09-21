@@ -55020,5 +55020,66 @@ input,textarea,select{font-family:inherit}
 @keyframes rsV7Ripple{to{opacity:0;transform:translate(-50%,-50%) scale(22)}}
 </style>
 
+
+<style id="rsenger-v8-ultra-premium">
+:root{--rs8-bg:#05070d;--rs8-glass:rgba(16,20,32,.62);--rs8-line:rgba(255,255,255,.10);--rs8-text:#f7f9ff;--rs8-muted:#9ba6bc;--rs8-accent:#8b7cff;--rs8-accent2:#45d7ff}
+html{background:var(--rs8-bg)}body{background:radial-gradient(900px 500px at 50% -10%,rgba(92,73,255,.18),transparent 65%),radial-gradient(700px 500px at 100% 80%,rgba(35,190,255,.10),transparent 65%),#05070d;color:var(--rs8-text);-webkit-tap-highlight-color:transparent}
+/* Remove the large click-circle/ripple overlay without touching normal button feedback. */
+.ripple,.ripple-effect,.click-ripple,.touch-ripple,.material-ripple,.wave,.wave-effect,.ink-ripple,.click-effect,.tap-effect{display:none!important;animation:none!important;opacity:0!important}
+body::before{content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-1;background:conic-gradient(from 180deg,transparent,rgba(139,124,255,.045),transparent 28%,rgba(69,215,255,.035),transparent 55%);filter:blur(55px);animation:rs8Ambient 18s linear infinite}
+@keyframes rs8Ambient{to{transform:rotate(360deg)}}
+.screen{background:transparent}
+button,.btn,.card,.setting-card,.rs-setting-card,.friend-card,.chat-item,.notification-item,.request-card,.profile-card,.modal,.dialog,.popup{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,border-color .22s ease,background .22s ease,filter .22s ease}
+button:active,.btn:active{transform:scale(.975)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid rgba(139,124,255,.65);outline-offset:2px}
+input,textarea,select{background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 10px 35px rgba(0,0,0,.16)!important}
+input:focus,textarea:focus,select:focus{border-color:rgba(139,124,255,.55)!important;box-shadow:0 0 0 4px rgba(139,124,255,.09),inset 0 1px 0 rgba(255,255,255,.06),0 12px 38px rgba(0,0,0,.22)!important}
+/* Premium surfaces, kept subtle so content remains readable. */
+.rs-setting-card,.friend-card,.chat-item,.notification-item,.request-card,.profile-card{background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.028))!important;border:1px solid var(--rs8-line)!important;box-shadow:0 12px 35px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.rs-setting-card:hover,.friend-card:hover,.chat-item:hover{border-color:rgba(139,124,255,.25)!important;box-shadow:0 18px 45px rgba(0,0,0,.25),0 0 25px rgba(139,124,255,.05),inset 0 1px 0 rgba(255,255,255,.06)!important}
+#globalBottomNav{background:linear-gradient(135deg,rgba(18,22,36,.88),rgba(8,11,20,.82))!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 18px 55px rgba(0,0,0,.45),0 0 35px rgba(94,77,255,.09),inset 0 1px 0 rgba(255,255,255,.08)!important;backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%)}
+#globalBottomNav button{position:relative;overflow:hidden;background:transparent!important}
+#globalBottomNav button::after{content:"";position:absolute;left:50%;bottom:7px;width:5px;height:5px;border-radius:50%;background:var(--rs8-accent);box-shadow:0 0 12px rgba(139,124,255,.9);transform:translateX(-50%) scale(0);transition:transform .22s ease}
+#globalBottomNav button.active::after,#globalBottomNav button[aria-current="page"]::after{transform:translateX(-50%) scale(1)}
+/* Splash: cinematic but lightweight, no intrusive click effects. */
+#splashScreen,.splash-screen,#splash{background:radial-gradient(circle at 50% 42%,rgba(120,103,255,.16),transparent 28%),radial-gradient(circle at 50% 60%,rgba(58,203,255,.07),transparent 45%),#04060b!important}
+.rs8-splash-orb{position:absolute;width:220px;height:220px;border-radius:50%;left:50%;top:43%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(151,137,255,.22) 0,rgba(103,91,255,.08) 36%,transparent 70%);filter:blur(2px);animation:rs8Orb 4.5s ease-in-out infinite;pointer-events:none}
+.rs8-splash-ring{position:absolute;width:150px;height:150px;border:1px solid rgba(154,142,255,.30);border-radius:50%;left:50%;top:43%;transform:translate(-50%,-50%);box-shadow:0 0 55px rgba(103,91,255,.18),inset 0 0 35px rgba(103,91,255,.08);animation:rs8Ring 3.8s ease-in-out infinite;pointer-events:none}
+@keyframes rs8Orb{50%{transform:translate(-50%,-50%) scale(1.13);opacity:.82}}
+@keyframes rs8Ring{50%{transform:translate(-50%,-50%) scale(1.08);opacity:.62}}
+.rs8-splash-content{position:relative;z-index:2;text-align:center}
+.rs8-splash-logo{width:86px;height:86px;margin:0 auto 22px;border-radius:27px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.18);box-shadow:0 22px 65px rgba(0,0,0,.42),0 0 45px rgba(125,108,255,.18),inset 0 1px 0 rgba(255,255,255,.16);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);animation:rs8Logo 1.2s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rs8Logo{from{opacity:0;transform:translateY(16px) scale(.82);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+.rs8-splash-title{font-size:clamp(32px,9vw,52px);font-weight:800;letter-spacing:-1.8px;background:linear-gradient(100deg,#fff 15%,#bcb3ff 52%,#75ddff 88%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:rs8Title 1s .18s both}
+.rs8-splash-sub{margin-top:8px;color:#9da8bf;font-size:12px;letter-spacing:3px;text-transform:uppercase;animation:rs8Title 1s .34s both}
+@keyframes rs8Title{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Page entrance */
+#homePage:not(.hidden),#profilePage:not(.hidden),#friendsPage:not(.hidden),#requestsPage:not(.hidden),#notificationsPage:not(.hidden),#settingsPage:not(.hidden){animation:rs8PageIn .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes rs8PageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+
+<script id="rsenger-v8-premium">
+(function(){
+  function removeBigClickEffects(){
+    document.querySelectorAll('.ripple,.ripple-effect,.click-ripple,.touch-ripple,.material-ripple,.wave,.wave-effect,.ink-ripple,.click-effect,.tap-effect').forEach(function(e){e.remove();});
+  }
+  function splashPolish(){
+    var root=document.querySelector('#splashScreen,.splash-screen,#splash');
+    if(!root||root.querySelector('.rs8-splash-orb')) return;
+    root.style.position='relative';root.style.overflow='hidden';
+    var orb=document.createElement('div');orb.className='rs8-splash-orb';
+    var ring=document.createElement('div');ring.className='rs8-splash-ring';
+    root.appendChild(orb);root.appendChild(ring);
+  }
+  function observer(){
+    removeBigClickEffects();splashPolish();
+    new MutationObserver(function(){removeBigClickEffects();splashPolish();}).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observer);else observer();
+})();
+</script>
+
 </body>
 </html>
