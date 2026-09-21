@@ -54709,5 +54709,79 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   });
 })();
 </script>
+
+<style id="rsenger-v6-navigation-polish">
+/* V6 — clean bottom-navigation spacing and premium Verify button */
+#globalBottomNav{position:fixed !important;left:18px !important;right:18px !important;bottom:18px !important;z-index:10000 !important;}
+/* Every normal page keeps enough breathing room above the fixed nav. */
+#homePage,#profilePage,#friendsPage,#requestsPage,#notificationsPage,#settingsPage{padding-bottom:115px !important;box-sizing:border-box !important;}
+/* Friends: restore the previous natural ending position; don't push the last card too high. */
+#friendsPage .premium-friends-list{padding-bottom:0 !important;margin-bottom:0 !important;}
+#friendsPage{padding-bottom:115px !important;}
+/* Settings must scroll inside the page, with the final controls safely above the nav. */
+#settingsPage.rsenger-settings-page{overflow-y:auto !important;overflow-x:hidden !important;-webkit-overflow-scrolling:touch !important;}
+#settingsPage .rs-settings-content{padding-bottom:230px !important;}
+#settingsPage .rs-logout-card{margin-bottom:24px !important;}
+/* Premium, compact Verify control inside the identifier field. */
+.rs-final-input-row>.rs-final-verify{
+ right:7px !important;top:50% !important;transform:translateY(-50%) !important;
+ height:32px !important;min-width:72px !important;padding:0 12px !important;
+ border-radius:10px !important;border:1px solid rgba(167,139,250,.22) !important;
+ background:linear-gradient(135deg,rgba(139,92,246,.24),rgba(34,211,238,.16)) !important;
+ color:#e9e4ff !important;font-size:11px !important;font-weight:900 !important;
+ letter-spacing:.2px !important;box-shadow:0 5px 16px rgba(99,75,210,.18),inset 0 1px 0 rgba(255,255,255,.08) !important;
+ backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.rs-final-input-row>.rs-final-verify:hover{filter:brightness(1.12);box-shadow:0 7px 20px rgba(99,75,210,.26),inset 0 1px 0 rgba(255,255,255,.1) !important;}
+.rs-final-input-row>.rs-final-verify:active{transform:translateY(-50%) scale(.96) !important;}
+.rs-final-input-row>.rs-final-verify.verified{background:linear-gradient(135deg,rgba(16,185,129,.24),rgba(34,211,238,.12)) !important;color:#6ee7b7 !important;border-color:rgba(52,211,153,.24) !important;}
+</style>
+<script id="rsenger-v6-page-refresh">
+(function(){
+ 'use strict';
+ function resetPageViewport(id){
+   var p=document.getElementById(id);
+   if(p){
+     try{p.scrollTop=0;}catch(e){}
+     p.querySelectorAll('[data-rs-transient]').forEach(function(el){el.removeAttribute('data-rs-transient');});
+   }
+   try{window.scrollTo(0,0);}catch(e){}
+   if(window.lucide){setTimeout(function(){try{lucide.createIcons();}catch(e){}},0);}
+ }
+ function refreshVisiblePage(id){
+   resetPageViewport(id);
+   /* Re-read the page's live data when navigation lands on it. */
+   try{
+     if(id==='homePage' && typeof window.loadChats==='function') window.loadChats();
+     if(id==='friendsPage' && typeof window.loadFriends==='function') window.loadFriends();
+     if(id==='requestsPage' && typeof window.loadRequests==='function') window.loadRequests();
+     if(id==='settingsPage' && typeof window.loadRsSettings==='function') window.loadRsSettings();
+   }catch(e){}
+ }
+ function wrap(name,id){
+   var old=window[name]; if(typeof old!=='function' || old.__rsV6Wrapped) return;
+   function wrapped(){
+     var out=old.apply(this,arguments);
+     setTimeout(function(){refreshVisiblePage(id);},35);
+     return out;
+   }
+   wrapped.__rsV6Wrapped=true; wrapped.__rsOriginal=old; window[name]=wrapped;
+ }
+ function install(){
+   wrap('showHome','homePage');
+   wrap('showFriends','friendsPage');
+   wrap('showRequests','requestsPage');
+   wrap('openSettings','settingsPage');
+   wrap('closeSettings','homePage');
+   wrap('showNotifications','notificationsPage');
+   /* Also reset when a page is restored after browser/app resume. */
+   document.addEventListener('pageshow',function(){
+     var ids=['homePage','profilePage','friendsPage','requestsPage','notificationsPage','settingsPage'];
+     ids.forEach(function(id){var p=document.getElementById(id);if(p&&!p.classList.contains('hidden')) resetPageViewport(id);});
+   });
+ }
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
+})();
+</script>
 </body>
 </html>
