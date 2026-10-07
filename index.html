@@ -4915,30 +4915,6 @@ transform:translateY(0);
 
 }
 
-#phoneNumber,
-#otpCode,
-#registerOTP{
-
-height:55px;
-
-border:none;
-
-border-radius:16px;
-
-background:#131A2B;
-
-padding:15px;
-
-color:white;
-
-border:1px solid #27314b;
-
-width:100%;
-
-margin-top:10px;
-
-}
-
 .reply-preview{
 
 background:#222;
@@ -4967,45 +4943,6 @@ margin-top:4px;
 
 }
 
-.otp-box{
-
-display:flex;
-justify-content:center;
-gap:12px;
-margin:35px 0;
-
-}
-
-.otp-input{
-
-width:52px;
-height:60px;
-
-background:#131A2B;
-
-border:1px solid #27314b;
-
-border-radius:16px;
-
-text-align:center;
-
-font-size:24px;
-
-color:#fff;
-
-outline:none;
-
-transition:.25s;
-
-}
-
-.otp-input:focus{
-
-border-color:#8B5CF6;
-
-box-shadow:0 0 15px rgba(139,92,246,.4);
-
-}
 
 
 html,
@@ -31604,40 +31541,91 @@ async function completeGoogleLogin(user){
         );
     }
 
-
     const userRef =
         db.collection("users")
           .doc(user.uid);
 
-
     const userDoc =
         await userRef.get();
 
+    /*
+     * Google display name -> Rsenger username
+     *
+     * Example:
+     * "John Doe" -> john doe -> johndoe
+     * If "johndoe" already exists:
+     * johndoe2, johndoe3, ...
+     */
+    async function createUniqueGoogleUsername(displayName, currentUid){
+
+        let base = String(displayName || "")
+            .trim()
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "");
+
+        if(!base){
+            base = "user";
+        }
+
+        /* Keep usernames within the app's normal username size. */
+        base = base.slice(0, 24);
+
+        let candidate = base;
+        let number = 2;
+
+        while(true){
+
+            const snapshot =
+                await db
+                    .collection("users")
+                    .where("username", "==", candidate)
+                    .limit(1)
+                    .get();
+
+            if(snapshot.empty){
+                return candidate;
+            }
+
+            /*
+             * If the username belongs to this same Firebase user,
+             * it is already safe to use.
+             */
+            if(
+                snapshot.docs.length &&
+                snapshot.docs[0].id === currentUid
+            ){
+                return candidate;
+            }
+
+            const suffix = String(number++);
+            candidate =
+                base.slice(
+                    0,
+                    Math.max(1, 30 - suffix.length)
+                ) + suffix;
+        }
+    }
+
 
     /*
-     * Existing user
+     * Existing Google user
      */
     if(userDoc.exists){
 
         const oldData =
             userDoc.data() || {};
 
-
         const updateData = {};
 
 
-        /*
-         * Google profile photo থাকলে
-         * আর existing profile photo না থাকলে
-         */
         if(
             !oldData.profilePic &&
             user.photoURL
         ){
-
             updateData.profilePic =
                 user.photoURL;
-
         }
 
 
@@ -31645,10 +31633,8 @@ async function completeGoogleLogin(user){
             !oldData.name &&
             user.displayName
         ){
-
             updateData.name =
                 user.displayName;
-
         }
 
 
@@ -31656,9 +31642,25 @@ async function completeGoogleLogin(user){
             !oldData.email &&
             user.email
         ){
-
             updateData.email =
                 user.email;
+        }
+
+
+        /*
+         * Older Google accounts may have been created with
+         * user_XXXXXXXX. Keep an existing real username,
+         * otherwise create one from the Google account name.
+         */
+        if(
+            !String(oldData.username || "").trim()
+        ){
+
+            updateData.username =
+                await createUniqueGoogleUsername(
+                    user.displayName || oldData.name,
+                    user.uid
+                );
 
         }
 
@@ -31666,8 +31668,9 @@ async function completeGoogleLogin(user){
         updateData.online = true;
 
 
-        await userRef.update(
-            updateData
+        await userRef.set(
+            updateData,
+            { merge: true }
         );
 
     }
@@ -31678,13 +31681,26 @@ async function completeGoogleLogin(user){
      */
     else{
 
+        const googleName =
+            String(
+                user.displayName ||
+                "Rsenger User"
+            ).trim();
+
+        const googleUsername =
+            await createUniqueGoogleUsername(
+                googleName,
+                user.uid
+            );
+
+
         await userRef.set({
 
             name:
-                user.displayName || "Rsenger User",
+                googleName,
 
             username:
-                ("user_" + user.uid.slice(-8)).toLowerCase(),
+                googleUsername,
 
             phone:
                 user.phoneNumber || "",
@@ -31701,8 +31717,17 @@ async function completeGoogleLogin(user){
             online:
                 true,
 
+            accountMethod:
+                "google",
+
             createdAt:
-                firebase.firestore.FieldValue
+                firebase.firestore
+                .FieldValue
+                .serverTimestamp(),
+
+            lastLoginAt:
+                firebase.firestore
+                .FieldValue
                 .serverTimestamp()
 
         });
@@ -31716,12 +31741,9 @@ async function completeGoogleLogin(user){
     await new Promise(resolve => {
 
         if(auth.currentUser){
-
             resolve();
-
             return;
         }
-
 
         const unsubscribe =
             auth.onAuthStateChanged(
@@ -31730,7 +31752,6 @@ async function completeGoogleLogin(user){
                     if(currentUser){
 
                         unsubscribe();
-
                         resolve();
 
                     }
@@ -31750,11 +31771,7 @@ async function completeGoogleLogin(user){
         );
 
     if(loginPage){
-
-        loginPage.classList.add(
-            "hidden"
-        );
-
+        loginPage.classList.add("hidden");
     }
 
 
@@ -31767,11 +31784,7 @@ async function completeGoogleLogin(user){
         );
 
     if(registerPage){
-
-        registerPage.classList.add(
-            "hidden"
-        );
-
+        registerPage.classList.add("hidden");
     }
 
 
@@ -31784,11 +31797,7 @@ async function completeGoogleLogin(user){
         );
 
     if(homePage){
-
-        homePage.classList.remove(
-            "hidden"
-        );
-
+        homePage.classList.remove("hidden");
     }
 
 
@@ -31802,19 +31811,15 @@ async function completeGoogleLogin(user){
             typeof setupPresence ===
             "function"
         ){
-
             setupPresence();
-
         }
 
     }
     catch(e){
-
         console.error(
             "Google presence error:",
             e
         );
-
     }
 
 
@@ -31824,19 +31829,15 @@ async function completeGoogleLogin(user){
             typeof saveFCMToken ===
             "function"
         ){
-
             saveFCMToken();
-
         }
 
     }
     catch(e){
-
         console.error(
             "Google FCM error:",
             e
         );
-
     }
 
 
@@ -31846,59 +31847,84 @@ async function completeGoogleLogin(user){
             typeof loadChats ===
             "function"
         ){
-
             loadChats();
-
         }
 
     }
     catch(e){
-
         console.error(
             "Google chats error:",
             e
         );
-
     }
 
 
     /*
      * Refresh Lucide icons
      */
-
-    if(
-        window.lucide
-    ){
-
+    if(window.lucide){
         lucide.createIcons();
-
     }
 
 
-    // Always restore the global bottom navigation after Google login.
-    // Google login previously showed Home before the navigation state was restored.
+    /*
+     * Always restore the global bottom navigation after Google login.
+     */
     try{
-        const nav = document.getElementById('globalBottomNav');
+
+        const nav =
+            document.getElementById(
+                "globalBottomNav"
+            );
+
         if(nav){
-            nav.classList.remove('hidden-nav');
-            nav.style.removeProperty('display');
-            nav.style.removeProperty('visibility');
-            nav.style.removeProperty('opacity');
-            nav.style.removeProperty('pointer-events');
+
+            nav.classList.remove(
+                "hidden-nav"
+            );
+
+            nav.style.removeProperty(
+                "display"
+            );
+
+            nav.style.removeProperty(
+                "visibility"
+            );
+
+            nav.style.removeProperty(
+                "opacity"
+            );
+
+            nav.style.removeProperty(
+                "pointer-events"
+            );
+
         }
-        if(typeof showBottomNav === 'function') showBottomNav();
-    }catch(navError){
-        console.error('Google bottom-nav restore error:', navError);
+
+        if(
+            typeof showBottomNav ===
+            "function"
+        ){
+            showBottomNav();
+        }
+
     }
+    catch(navError){
+
+        console.error(
+            "Google bottom-nav restore error:",
+            navError
+        );
+
+    }
+
 
     googleLoginInProgress =
         false;
 
-
     resetGoogleButtons();
 
 }
-
 
 
 /* =====================================================
@@ -39609,7 +39635,6 @@ forwardMessage();
 
 }
 
-let registerConfirmationResult;
 
 
 function saveNickname(){
@@ -54417,7 +54442,7 @@ async function rsLogoutAll(){const ok=await premiumConfirm({title:'Logout from a
 .rs-final-method{border:0;border-radius:14px;min-height:44px;padding:9px 5px;background:transparent;color:inherit;font-weight:800;font-size:12px;cursor:pointer;transition:all .22s ease}
 .rs-final-method.active{background:linear-gradient(135deg,#7758ee,#28abc7)!important;color:#fff!important;box-shadow:0 9px 24px rgba(105,81,226,.28)!important;transform:translateY(-1px)}
 .rs-final-input-row{position:relative;width:100%}.rs-final-input-row>.field{width:100%;box-sizing:border-box}.rs-final-input-row input{padding-right:88px!important}.rs-final-verify{position:absolute;right:8px;top:7px;height:34px;min-width:66px;padding:0 10px;border:0;border-radius:11px;background:linear-gradient(135deg,rgba(119,88,238,.22),rgba(40,171,199,.16));color:#8c78ff;font-size:11px;font-weight:850;letter-spacing:.1px;cursor:pointer;z-index:5;transition:all .2s ease}.rs-final-verify:active{transform:scale(.96)}.rs-final-verify.verified{background:rgba(21,150,107,.14);color:#24b783}.rs-final-verify:disabled{opacity:.62;cursor:default}
-.rs-final-otp{display:none;margin:10px 0 14px;padding:14px;border-radius:18px;background:linear-gradient(135deg,rgba(119,88,238,.10),rgba(40,171,199,.08));border:1px solid rgba(119,88,238,.16);box-shadow:0 10px 28px rgba(15,23,42,.07)}.rs-final-otp.show{display:block;animation:rsFinalIn .22s ease}.rs-final-otp-title{font-size:12px;font-weight:850;margin-bottom:10px}.rs-final-boxes{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.rs-final-box{width:100%;min-width:0;height:46px;border:1px solid rgba(100,116,139,.20);border-radius:13px;text-align:center;font-size:18px;font-weight:850;background:rgba(255,255,255,.78);color:inherit;outline:none;box-sizing:border-box}.rs-final-box:focus{border-color:#7758ee;box-shadow:0 0 0 3px rgba(119,88,238,.13)}body.dark .rs-final-box{background:#111827;color:#fff}.rs-final-otp-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;font-size:10px;opacity:.66}.rs-final-resend{border:0;background:none;color:#8c78ff;font-weight:850;font-size:10px;cursor:pointer;padding:0}.rs-final-resend:disabled{opacity:.55;cursor:default}.rs-final-status{margin-top:9px;font-size:11px;line-height:1.42}.rs-final-status.ok{color:#20b47f}.rs-final-status.err{color:#e05a67}.rs-final-email-note{font-size:10px;line-height:1.45;opacity:.58;margin:-5px 2px 12px}.rs-final-recaptcha-anchor{position:fixed;left:-10000px;top:-10000px;width:1px;height:1px;opacity:0;pointer-events:none}.rs-final-lock-note{font-size:10px;line-height:1.45;opacity:.58;margin:-5px 2px 13px}
+
 @keyframes rsFinalIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 </style>
 <script id="rs-final-auth-script">
