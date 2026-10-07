@@ -54849,205 +54849,291 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
   'use strict';
 
-  /*
-   * Rsenger in-app navigation history.
-   * Android/browser Back now moves through Rsenger pages instead of
-   * immediately leaving the app/site.
-   */
-  var RS_KEY = '__rsenger_page__';
-  var stack = [];
-  var restoring = false;
-  var installed = false;
+  /* =========================================================
+     RSENGER UNIVERSAL MOBILE BACK NAVIGATION
+     Handles main pages, admin sub-pages, settings/account-centre,
+     profile/chat overlays and other in-app layers.
+     ========================================================= */
+  var RS_KEY='__rsenger_nav_v2__';
+  var stack=[];
+  var restoring=false;
+  var installed=false;
 
-  var pageIds = [
-    'homePage',
-    'profilePage',
-    'friendsPage',
-    'requestsPage',
-    'notificationsPage',
-    'settingsPage',
-    'chatPage',
-    'chainPage',
-    'rsengerGroupPage',
-    'loginPage',
-    'registerPage'
+  var pageIds=[
+    'homePage','profilePage','friendsPage','requestsPage',
+    'notificationsPage','settingsPage','chatPage','chainPage',
+    'rsengerGroupPage','loginPage','registerPage',
+    'rsengerAdminPanel','rsengerGroupAdminsPage',
+    'rsengerBlockedMembersView','rsengerRestrictedMembersPage'
   ];
+
+  var layers=[
+    'rsengerAccountCentreModal','rsengerEditProfileModal',
+    'editProfileModal','editMessageModal','messageMenu','messageOverlay',
+    'rsengerGroupMessageMenu','chainComposerOverlay','photoViewer','premiumPopup',
+    'premiumAlert','premiumConfirm','premiumPrompt'
+  ];
+
+  function exists(id){return document.getElementById(id);}
+  function isVisible(el){
+    if(!el) return false;
+    if(el.classList && el.classList.contains('hidden')) return false;
+    var cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && cs.opacity!=='0';
+  }
 
   function visiblePage(){
     for(var i=0;i<pageIds.length;i++){
-      var el=document.getElementById(pageIds[i]);
-      if(el && !el.classList.contains('hidden')) return pageIds[i];
+      var el=exists(pageIds[i]);
+      if(isVisible(el)) return pageIds[i];
     }
     return 'homePage';
   }
 
-  function pageKeyForName(name){
-    var map={
-      showHome:'homePage',
-      showProfile:'profilePage',
-      showFriends:'friendsPage',
-      showRequests:'requestsPage',
-      showNotifications:'notificationsPage',
-      openSettings:'settingsPage',
-      showChain:'chainPage',
-      openChat:'chatPage',
-      openRsengerGroup:'rsengerGroupPage',
-      showLogin:'loginPage',
-      showRegister:'registerPage'
-    };
-    return map[name] || null;
+  function visibleLayer(){
+    for(var i=0;i<layers.length;i++){
+      var el=exists(layers[i]);
+      if(isVisible(el)) return layers[i];
+    }
+    return null;
   }
 
-  function runOriginal(name, original, args){
-    if(typeof original !== 'function') return;
-    restoring = true;
-    try{
-      return original.apply(window,args || []);
-    }finally{
-      setTimeout(function(){ restoring=false; },0);
-    }
+  function stateKey(){
+    var layer=visibleLayer();
+    if(layer) return 'layer:'+layer;
+    return 'page:'+visiblePage();
   }
 
-  function navigate(name, original, key, args){
-    if(typeof original !== 'function') return;
-
-    if(restoring){
-      return original.apply(window,args || []);
-    }
-
-    var current = stack.length ? stack[stack.length-1] : visiblePage();
-
-    if(!current) current='homePage';
-
-    if(key === current){
-      return original.apply(window,args || []);
-    }
-
+  function push(key){
+    if(!key) return;
+    var last=stack[stack.length-1];
+    if(last===key) return;
     stack.push(key);
-
-    try{
-      history.pushState({[RS_KEY]:key}, '', location.href);
-    }catch(e){}
-
-    return original.apply(window,args || []);
+    try{history.pushState({[RS_KEY]:key},'',location.href);}catch(e){}
   }
 
-  function wrap(name,key){
-    var original=window[name];
-    if(typeof original!=='function' || original.__rsBackWrapped) return;
-
-    function wrapped(){
-      return navigate(name,original,key,Array.prototype.slice.call(arguments));
+  function callOriginal(fn,args){
+    if(typeof fn!=='function') return;
+    restoring=true;
+    try{return fn.apply(window,args||[]);}finally{
+      setTimeout(function(){restoring=false;},0);
     }
+  }
 
-    wrapped.__rsBackWrapped=true;
-    wrapped.__rsBackOriginal=original;
+  function wrapOpen(name,key){
+    var fn=window[name];
+    if(typeof fn!=='function' || fn.__rsNavOpenWrapped) return;
+    function wrapped(){
+      if(restoring) return fn.apply(window,arguments);
+      var out=fn.apply(window,arguments);
+      setTimeout(function(){
+        var actual=visibleLayer() ? 'layer:'+visibleLayer() : key;
+        push(actual);
+      },30);
+      return out;
+    }
+    wrapped.__rsNavOpenWrapped=true;
+    wrapped.__rsOriginal=fn;
     window[name]=wrapped;
+  }
+
+  function wrapClose(name,key){
+    var fn=window[name];
+    if(typeof fn!=='function' || fn.__rsNavCloseWrapped) return;
+    function wrapped(){
+      if(restoring) return fn.apply(window,arguments);
+      var last=stack[stack.length-1];
+      if(last===key && stack.length>1){
+        try{return history.back();}catch(e){}
+      }
+      return fn.apply(window,arguments);
+    }
+    wrapped.__rsNavCloseWrapped=true;
+    wrapped.__rsOriginal=fn;
+    window[name]=wrapped;
+  }
+
+  function wrapPage(name,key){
+    var fn=window[name];
+    if(typeof fn!=='function' || fn.__rsNavPageWrapped) return;
+    function wrapped(){
+      if(restoring) return fn.apply(window,arguments);
+      var current=stack.length?stack[stack.length-1]:stateKey();
+      var out=fn.apply(window,arguments);
+      if(key!==current) push('page:'+key);
+      return out;
+    }
+    wrapped.__rsNavPageWrapped=true;
+    wrapped.__rsOriginal=fn;
+    window[name]=wrapped;
+  }
+
+  function closeLayerDirect(id){
+    var el=exists(id);
+    if(!el) return false;
+    try{
+      if(id==='rsengerAccountCentreModal' || id==='rsengerEditProfileModal') el.remove();
+      else {
+        el.classList.add('hidden');
+        el.classList.remove('active');
+        el.style.removeProperty('display');
+      }
+      document.body.style.overflow='';
+      return true;
+    }catch(e){return false;}
+  }
+
+  function restore(key){
+    restoring=true;
+    try{
+      if(key.indexOf('layer:')===0){
+        var lid=key.slice(6);
+        /* Most dynamic layers are safest to restore by reopening their
+           owner rather than recreating an incomplete modal. */
+        if(lid==='rsengerAccountCentreModal'){
+          if(typeof window.openRsengerAccountCentre==='function') window.openRsengerAccountCentre();
+        }else if(lid==='rsengerEditProfileModal'){
+          if(typeof window.editProfile==='function') window.editProfile();
+        }else if(lid==='photoViewer'){
+          /* A photo viewer cannot reliably restore its previous URL, so
+             return to the underlying page instead of showing a broken viewer. */
+          returnToUnderlyingPage();
+        }else{
+          /* Nested menus/modals should normally be closed on Back. */
+          closeLayerDirect(lid);
+        }
+        return;
+      }
+
+      var page=key.slice(5);
+      var map={
+        homePage:'showHome',profilePage:'showProfile',friendsPage:'showFriends',
+        requestsPage:'showRequests',notificationsPage:'showNotifications',
+        settingsPage:'openSettings',chainPage:'showChain',
+        loginPage:'showLogin',registerPage:'showRegister'
+      };
+
+      if(page==='chatPage'){
+        /* Chat needs a recipient. If it cannot be restored safely,
+           return to the page before chat. */
+        returnToUnderlyingPage();
+        return;
+      }
+
+      if(page==='rsengerGroupPage'){
+        if(typeof window.openRsengerGroup==='function' && window.RSENGER_GROUP_ID){
+          window.openRsengerGroup(window.RSENGER_GROUP_ID);
+        }else if(typeof window.showHome==='function') window.showHome();
+        return;
+      }
+
+      if(page==='rsengerAdminPanel'){
+        if(typeof window.openRsengerAdminPanel==='function') window.openRsengerAdminPanel();
+        return;
+      }
+      if(page==='rsengerGroupAdminsPage'){
+        if(typeof window.openRsengerAdmins==='function') window.openRsengerAdmins();
+        return;
+      }
+      if(page==='rsengerBlockedMembersView'){
+        if(typeof window.openRsengerBlockedMembers==='function') window.openRsengerBlockedMembers();
+        return;
+      }
+      if(page==='rsengerRestrictedMembersPage'){
+        if(typeof window.openRsengerRestrictedMembers==='function') window.openRsengerRestrictedMembers();
+        return;
+      }
+
+      /* Admin Activity and Member Controls live inside the Admin Panel
+         rather than having their own top-level screen. On Back, restoring
+         the Admin Panel is the correct and safe parent state. */
+      if(page==='rsengerAdminActivity' || page==='rsengerAdminMemberControls'){
+        if(typeof window.openRsengerAdminPanel==='function') window.openRsengerAdminPanel();
+        return;
+      }
+
+      if(map[page] && typeof window[map[page]]==='function'){
+        window[map[page]]();
+      }else if(typeof window.showHome==='function'){
+        window.showHome();
+      }
+    }catch(e){
+      console.error('Rsenger universal back restore error:',e);
+      try{if(typeof window.showHome==='function') window.showHome();}catch(ignore){}
+    }finally{
+      setTimeout(function(){restoring=false;},0);
+    }
+  }
+
+  function returnToUnderlyingPage(){
+    var idx=stack.length-2;
+    while(idx>=0 && stack[idx].indexOf('layer:')===0) idx--;
+    var target=idx>=0?stack[idx]:'page:homePage';
+    restore(target);
   }
 
   function install(){
     if(installed) return;
     installed=true;
 
-    var initial=visiblePage();
+    var initial=stateKey();
     stack=[initial];
+    try{history.replaceState({[RS_KEY]:initial},'',location.href);}catch(e){}
 
-    /* Replace the current browser entry with an Rsenger entry. */
-    try{
-      history.replaceState({[RS_KEY]:initial}, '', location.href);
-    }catch(e){}
+    /* Main navigation */
+    wrapPage('showHome','homePage');
+    wrapPage('showProfile','profilePage');
+    wrapPage('showFriends','friendsPage');
+    wrapPage('showRequests','requestsPage');
+    wrapPage('showNotifications','notificationsPage');
+    wrapPage('openSettings','settingsPage');
+    wrapPage('showChain','chainPage');
+    wrapPage('openChat','chatPage');
+    wrapPage('openRsengerGroup','rsengerGroupPage');
+    wrapPage('showLogin','loginPage');
+    wrapPage('showRegister','registerPage');
 
-    /* Wrap the app's real page navigation functions. */
-    wrap('showHome','homePage');
-    wrap('showProfile','profilePage');
-    wrap('showFriends','friendsPage');
-    wrap('showRequests','requestsPage');
-    wrap('showNotifications','notificationsPage');
-    wrap('openSettings','settingsPage');
-    wrap('showChain','chainPage');
-    wrap('openChat','chatPage');
-    wrap('openRsengerGroup','rsengerGroupPage');
-    wrap('showLogin','loginPage');
-    wrap('showRegister','registerPage');
+    /* Admin + nested admin navigation */
+    wrapOpen('openRsengerAdminPanel','page:rsengerAdminPanel');
+    wrapOpen('openRsengerAdmins','page:rsengerGroupAdminsPage');
+    wrapOpen('openRsengerBlockedMembers','page:rsengerBlockedMembersView');
+    wrapOpen('openRsengerRestrictedMembers','page:rsengerRestrictedMembersPage');
+    wrapOpen('openRsengerAdminActivity','page:rsengerAdminActivity');
+    wrapOpen('openRsengerAdminMemberControls','page:rsengerAdminMemberControls');
+
+    /* Settings / account centre / profile overlays */
+    wrapOpen('openRsengerAccountCentre','layer:rsengerAccountCentreModal');
+    wrapOpen('editProfile','layer:rsengerEditProfileModal');
+    wrapOpen('premiumAlert','layer:premiumAlert');
+    wrapOpen('premiumConfirm','layer:premiumConfirm');
+    wrapOpen('premiumPrompt','layer:premiumPrompt');
+
+    /* Explicit close functions become browser-back aware. */
+    wrapClose('closeRsengerAdminPanel','page:rsengerAdminPanel');
+    wrapClose('closeRsengerAdmins','page:rsengerGroupAdminsPage');
+    wrapClose('closeRsengerBlockedMembers','page:rsengerBlockedMembersView');
+    wrapClose('closeRsengerEditProfile','layer:rsengerEditProfileModal');
+    wrapClose('closeSettings','page:settingsPage');
 
     window.addEventListener('popstate',function(event){
-      var state=event.state || {};
-
-      /* Ignore unrelated browser history entries. */
+      var state=event.state||{};
       if(!state[RS_KEY]){
-        try{ history.pushState({[RS_KEY]:stack[stack.length-1] || 'homePage'},'',location.href); }catch(e){}
+        /* Do not let an external browser history entry immediately tear
+           down the app. Keep the current in-app state alive. */
+        try{history.pushState({[RS_KEY]:stack[stack.length-1]||'page:homePage'},'',location.href);}catch(e){}
         return;
       }
 
-      /*
-       * Browser Back has already moved one history entry. Move the app's
-       * page stack back by one and restore that page without creating a
-       * second history entry.
-       */
       if(stack.length>1){
         stack.pop();
-        var target=stack[stack.length-1] || 'homePage';
-
-        restoring=true;
-        try{
-          var fnMap={
-            homePage:'showHome',
-            profilePage:'showProfile',
-            friendsPage:'showFriends',
-            requestsPage:'showRequests',
-            notificationsPage:'showNotifications',
-            settingsPage:'openSettings',
-            chainPage:'showChain',
-            loginPage:'showLogin',
-            registerPage:'showRegister'
-          };
-
-          if(target==='chatPage'){
-            /* A chat needs its original email. If the browser history
-               cannot restore a specific chat, return to the previous
-               list page rather than showing a broken empty chat. */
-            var fallback=stack.length>1 ? stack[stack.length-1] : 'homePage';
-            stack.pop();
-            target=fallback;
-            fnMap={
-              homePage:'showHome',
-              profilePage:'showProfile',
-              friendsPage:'showFriends',
-              requestsPage:'showRequests',
-              notificationsPage:'showNotifications',
-              settingsPage:'openSettings',
-              chainPage:'showChain',
-            loginPage:'showLogin',
-            registerPage:'showRegister'
-            };
-          }
-
-          if(target==='rsengerGroupPage'){
-            /* Group page is restored by its existing opener when possible. */
-            if(typeof window.openRsengerGroup==='function' && window.RSENGER_GROUP_ID){
-              window.openRsengerGroup();
-            }else if(typeof window.showHome==='function'){
-              window.showHome();
-            }
-          }else if(fnMap[target] && typeof window[fnMap[target]]==='function'){
-            window[fnMap[target]]();
-          }else if(typeof window.showHome==='function'){
-            window.showHome();
-          }
-        }catch(e){
-          console.error('Rsenger mobile back navigation error:',e);
-          try{ if(typeof window.showHome==='function') window.showHome(); }catch(ignore){}
-        }finally{
-          setTimeout(function(){restoring=false;},0);
-        }
+        var target=stack[stack.length-1]||'page:homePage';
+        restore(target);
         return;
       }
 
-      /* At Home: keep the app open instead of leaving the site immediately. */
-      try{
-        history.pushState({[RS_KEY]:'homePage'},'',location.href);
-      }catch(e){}
-    });
+      /* At the first in-app screen, consume Android Back once more. */
+      try{history.pushState({[RS_KEY]:stack[0]||'page:homePage'},'',location.href);}catch(e){}
+    },{passive:true});
   }
 
   if(document.readyState==='loading'){
