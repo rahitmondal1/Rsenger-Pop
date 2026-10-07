@@ -54844,5 +54844,219 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
 })();
 </script>
+
+<script id="rsenger-mobile-back-navigation">
+(function(){
+  'use strict';
+
+  /*
+   * Rsenger in-app navigation history.
+   * Android/browser Back now moves through Rsenger pages instead of
+   * immediately leaving the app/site.
+   */
+  var RS_KEY = '__rsenger_page__';
+  var stack = [];
+  var restoring = false;
+  var installed = false;
+
+  var pageIds = [
+    'homePage',
+    'profilePage',
+    'friendsPage',
+    'requestsPage',
+    'notificationsPage',
+    'settingsPage',
+    'chatPage',
+    'chainPage',
+    'rsengerGroupPage',
+    'loginPage',
+    'registerPage'
+  ];
+
+  function visiblePage(){
+    for(var i=0;i<pageIds.length;i++){
+      var el=document.getElementById(pageIds[i]);
+      if(el && !el.classList.contains('hidden')) return pageIds[i];
+    }
+    return 'homePage';
+  }
+
+  function pageKeyForName(name){
+    var map={
+      showHome:'homePage',
+      showProfile:'profilePage',
+      showFriends:'friendsPage',
+      showRequests:'requestsPage',
+      showNotifications:'notificationsPage',
+      openSettings:'settingsPage',
+      showChain:'chainPage',
+      openChat:'chatPage',
+      openRsengerGroup:'rsengerGroupPage',
+      showLogin:'loginPage',
+      showRegister:'registerPage'
+    };
+    return map[name] || null;
+  }
+
+  function runOriginal(name, original, args){
+    if(typeof original !== 'function') return;
+    restoring = true;
+    try{
+      return original.apply(window,args || []);
+    }finally{
+      setTimeout(function(){ restoring=false; },0);
+    }
+  }
+
+  function navigate(name, original, key, args){
+    if(typeof original !== 'function') return;
+
+    if(restoring){
+      return original.apply(window,args || []);
+    }
+
+    var current = stack.length ? stack[stack.length-1] : visiblePage();
+
+    if(!current) current='homePage';
+
+    if(key === current){
+      return original.apply(window,args || []);
+    }
+
+    stack.push(key);
+
+    try{
+      history.pushState({[RS_KEY]:key}, '', location.href);
+    }catch(e){}
+
+    return original.apply(window,args || []);
+  }
+
+  function wrap(name,key){
+    var original=window[name];
+    if(typeof original!=='function' || original.__rsBackWrapped) return;
+
+    function wrapped(){
+      return navigate(name,original,key,Array.prototype.slice.call(arguments));
+    }
+
+    wrapped.__rsBackWrapped=true;
+    wrapped.__rsBackOriginal=original;
+    window[name]=wrapped;
+  }
+
+  function install(){
+    if(installed) return;
+    installed=true;
+
+    var initial=visiblePage();
+    stack=[initial];
+
+    /* Replace the current browser entry with an Rsenger entry. */
+    try{
+      history.replaceState({[RS_KEY]:initial}, '', location.href);
+    }catch(e){}
+
+    /* Wrap the app's real page navigation functions. */
+    wrap('showHome','homePage');
+    wrap('showProfile','profilePage');
+    wrap('showFriends','friendsPage');
+    wrap('showRequests','requestsPage');
+    wrap('showNotifications','notificationsPage');
+    wrap('openSettings','settingsPage');
+    wrap('showChain','chainPage');
+    wrap('openChat','chatPage');
+    wrap('openRsengerGroup','rsengerGroupPage');
+    wrap('showLogin','loginPage');
+    wrap('showRegister','registerPage');
+
+    window.addEventListener('popstate',function(event){
+      var state=event.state || {};
+
+      /* Ignore unrelated browser history entries. */
+      if(!state[RS_KEY]){
+        try{ history.pushState({[RS_KEY]:stack[stack.length-1] || 'homePage'},'',location.href); }catch(e){}
+        return;
+      }
+
+      /*
+       * Browser Back has already moved one history entry. Move the app's
+       * page stack back by one and restore that page without creating a
+       * second history entry.
+       */
+      if(stack.length>1){
+        stack.pop();
+        var target=stack[stack.length-1] || 'homePage';
+
+        restoring=true;
+        try{
+          var fnMap={
+            homePage:'showHome',
+            profilePage:'showProfile',
+            friendsPage:'showFriends',
+            requestsPage:'showRequests',
+            notificationsPage:'showNotifications',
+            settingsPage:'openSettings',
+            chainPage:'showChain',
+            loginPage:'showLogin',
+            registerPage:'showRegister'
+          };
+
+          if(target==='chatPage'){
+            /* A chat needs its original email. If the browser history
+               cannot restore a specific chat, return to the previous
+               list page rather than showing a broken empty chat. */
+            var fallback=stack.length>1 ? stack[stack.length-1] : 'homePage';
+            stack.pop();
+            target=fallback;
+            fnMap={
+              homePage:'showHome',
+              profilePage:'showProfile',
+              friendsPage:'showFriends',
+              requestsPage:'showRequests',
+              notificationsPage:'showNotifications',
+              settingsPage:'openSettings',
+              chainPage:'showChain',
+            loginPage:'showLogin',
+            registerPage:'showRegister'
+            };
+          }
+
+          if(target==='rsengerGroupPage'){
+            /* Group page is restored by its existing opener when possible. */
+            if(typeof window.openRsengerGroup==='function' && window.RSENGER_GROUP_ID){
+              window.openRsengerGroup();
+            }else if(typeof window.showHome==='function'){
+              window.showHome();
+            }
+          }else if(fnMap[target] && typeof window[fnMap[target]]==='function'){
+            window[fnMap[target]]();
+          }else if(typeof window.showHome==='function'){
+            window.showHome();
+          }
+        }catch(e){
+          console.error('Rsenger mobile back navigation error:',e);
+          try{ if(typeof window.showHome==='function') window.showHome(); }catch(ignore){}
+        }finally{
+          setTimeout(function(){restoring=false;},0);
+        }
+        return;
+      }
+
+      /* At Home: keep the app open instead of leaving the site immediately. */
+      try{
+        history.pushState({[RS_KEY]:'homePage'},'',location.href);
+      }catch(e){}
+    });
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else{
+    install();
+  }
+})();
+</script>
+
 </body>
 </html>
