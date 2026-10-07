@@ -130,6 +130,94 @@ body{
 }
 </style>
 
+
+<style id="rsenger-profile-photo-theme-fix">
+/* PROFILE PHOTO — LIGHT / DARK / SYSTEM */
+body.rs-theme-light .profile-photo-placeholder-premium,
+body:not(.rs-theme-dark):not(.dark) .profile-photo-placeholder-premium{
+  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.96),rgba(238,242,248,.97) 55%,rgba(220,226,236,1)) !important;
+  color:#7c8799 !important;
+  border:1px solid rgba(100,116,139,.14) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 30px rgba(15,23,42,.08) !important;
+}
+body.rs-theme-dark .profile-photo-placeholder-premium,
+body.dark .profile-photo-placeholder-premium{
+  background:radial-gradient(circle at 30% 20%,rgba(56,67,94,.96),rgba(25,31,48,.98) 55%,rgba(10,14,24,1)) !important;
+  color:#b8c2d6 !important;
+  border:1px solid rgba(148,163,184,.18) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.34) !important;
+}
+
+/* PHOTO MENU — LIGHT */
+body.rs-theme-light .rs-profile-photo-menu,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-menu{
+  background:linear-gradient(180deg,#ffffff,#f7f8fc) !important;
+  border-color:rgba(71,85,105,.13) !important;
+  color:#172033 !important;
+  box-shadow:0 30px 90px rgba(15,23,42,.24),0 8px 30px rgba(124,58,237,.12) !important;
+}
+body.rs-theme-light .rs-profile-photo-menu-head,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-menu-head{
+  border-bottom-color:rgba(100,116,139,.13) !important;
+}
+body.rs-theme-light .rs-profile-photo-menu-head strong,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-menu-head strong{color:#172033 !important;}
+body.rs-theme-light .rs-profile-photo-menu-head span,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-menu-head span{color:#70798a !important;}
+body.rs-theme-light .rs-profile-photo-menu-close,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-menu-close{
+  background:#eef0f5 !important;color:#5f6878 !important;
+}
+body.rs-theme-light .rs-profile-photo-option,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-option{color:#172033 !important;}
+body.rs-theme-light .rs-profile-photo-option:hover,
+body:not(.rs-theme-dark):not(.dark) .rs-profile-photo-option:hover{background:#f1f2f7 !important;}
+
+/* PHOTO MENU — DARK */
+body.rs-theme-dark .rs-profile-photo-menu,
+body.dark .rs-profile-photo-menu{
+  background:linear-gradient(180deg,#141927,#0b0f19) !important;
+  border-color:rgba(148,163,184,.18) !important;
+  color:#f5f7fb !important;
+  box-shadow:0 30px 90px rgba(0,0,0,.55),0 8px 30px rgba(124,58,237,.18) !important;
+}
+body.rs-theme-dark .rs-profile-photo-menu-head,
+body.dark .rs-profile-photo-menu-head{
+  border-bottom-color:rgba(148,163,184,.13) !important;
+}
+body.rs-theme-dark .rs-profile-photo-menu-head strong,
+body.dark .rs-profile-photo-menu-head strong{color:#f7f9ff !important;}
+body.rs-theme-dark .rs-profile-photo-menu-head span,
+body.dark .rs-profile-photo-menu-head span{color:#9aa6ba !important;}
+body.rs-theme-dark .rs-profile-photo-menu-close,
+body.dark .rs-profile-photo-menu-close{
+  background:rgba(148,163,184,.11) !important;color:#c1cad9 !important;
+}
+body.rs-theme-dark .rs-profile-photo-option,
+body.dark .rs-profile-photo-option{color:#f4f7fb !important;}
+body.rs-theme-dark .rs-profile-photo-option:hover,
+body.dark .rs-profile-photo-option:hover{background:rgba(148,163,184,.09) !important;}
+body.rs-theme-dark .rs-profile-photo-option small,
+body.dark .rs-profile-photo-option small{color:#98a5ba !important;}
+body.rs-theme-dark .rs-profile-photo-option-arrow,
+body.dark .rs-profile-photo-option-arrow{color:#8e9bb0 !important;}
+body.rs-theme-dark .rs-profile-photo-menu-overlay,
+body.dark .rs-profile-photo-menu-overlay{background:rgba(2,5,12,.70) !important;}
+
+/* System mode follows the device theme while the app is in System mode. */
+@media (prefers-color-scheme: dark){
+  body:not(.rs-theme-light) .profile-photo-placeholder-premium{
+    background:radial-gradient(circle at 30% 20%,rgba(56,67,94,.96),rgba(25,31,48,.98) 55%,rgba(10,14,24,1)) !important;
+    color:#b8c2d6 !important;
+    border-color:rgba(148,163,184,.18) !important;
+  }
+  body:not(.rs-theme-light) .rs-profile-photo-menu{
+    background:linear-gradient(180deg,#141927,#0b0f19) !important;
+    color:#f5f7fb !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -31536,26 +31624,12 @@ async function googleLogin(){
 async function completeGoogleLogin(user){
 
     if(!user){
-        throw new Error(
-            "Google account information was not received."
-        );
+        throw new Error("Google account information was not received.");
     }
 
-    const userRef =
-        db.collection("users")
-          .doc(user.uid);
+    const userRef = db.collection("users").doc(user.uid);
+    const userDoc = await userRef.get();
 
-    const userDoc =
-        await userRef.get();
-
-    /*
-     * Google display name -> Rsenger username
-     *
-     * Example:
-     * "John Doe" -> john doe -> johndoe
-     * If "johndoe" already exists:
-     * johndoe2, johndoe3, ...
-     */
     async function createUniqueGoogleUsername(displayName, currentUid){
 
         let base = String(displayName || "")
@@ -31565,11 +31639,7 @@ async function completeGoogleLogin(user){
             .replace(/[\u0300-\u036f]/g, "")
             .replace(/[^a-z0-9]+/g, "");
 
-        if(!base){
-            base = "user";
-        }
-
-        /* Keep usernames within the app's normal username size. */
+        if(!base) base = "user";
         base = base.slice(0, 24);
 
         let candidate = base;
@@ -31577,115 +31647,72 @@ async function completeGoogleLogin(user){
 
         while(true){
 
-            const snapshot =
-                await db
-                    .collection("users")
-                    .where("username", "==", candidate)
-                    .limit(1)
-                    .get();
+            const snapshot = await db.collection("users")
+                .where("username", "==", candidate)
+                .limit(1)
+                .get();
 
-            if(snapshot.empty){
-                return candidate;
-            }
+            if(snapshot.empty) return candidate;
 
-            /*
-             * If the username belongs to this same Firebase user,
-             * it is already safe to use.
-             */
-            if(
-                snapshot.docs.length &&
-                snapshot.docs[0].id === currentUid
-            ){
+            if(snapshot.docs.length && snapshot.docs[0].id === currentUid){
                 return candidate;
             }
 
             const suffix = String(number++);
             candidate =
-                base.slice(
-                    0,
-                    Math.max(1, 30 - suffix.length)
-                ) + suffix;
+                base.slice(0, Math.max(1, 30 - suffix.length)) +
+                suffix;
         }
     }
 
+    /*
+     * Do not create a duplicate Firestore profile for an email that
+     * already belongs to another Rsenger account.
+     */
+    if(user.email){
+
+        const emailSnapshot = await db.collection("users")
+            .where("email", "==", String(user.email).trim().toLowerCase())
+            .limit(2)
+            .get();
+
+        const otherAccount =
+            emailSnapshot.docs.find(doc => doc.id !== user.uid);
+
+        if(otherAccount){
+
+            try{ await auth.signOut(); }catch(e){}
+
+            throw new Error(
+                "This Google email is already connected to an existing Rsenger account. " +
+                "Please log in with that existing account instead of creating another one."
+            );
+        }
+    }
 
     /*
-     * Existing Google user
+     * EXISTING GOOGLE ACCOUNT:
+     * Open it exactly as stored. Never copy Google name/photo/email/etc.
+     * into an account that already exists.
      */
     if(userDoc.exists){
 
-        const oldData =
-            userDoc.data() || {};
-
-        const updateData = {};
-
-
-        if(
-            !oldData.profilePic &&
-            user.photoURL
-        ){
-            updateData.profilePic =
-                user.photoURL;
-        }
-
-
-        if(
-            !oldData.name &&
-            user.displayName
-        ){
-            updateData.name =
-                user.displayName;
-        }
-
-
-        if(
-            !oldData.email &&
-            user.email
-        ){
-            updateData.email =
-                user.email;
-        }
-
-
-        /*
-         * Older Google accounts may have been created with
-         * user_XXXXXXXX. Keep an existing real username,
-         * otherwise create one from the Google account name.
-         */
-        if(
-            !String(oldData.username || "").trim()
-        ){
-
-            updateData.username =
-                await createUniqueGoogleUsername(
-                    user.displayName || oldData.name,
-                    user.uid
-                );
-
-        }
-
-
-        updateData.online = true;
-
-
-        await userRef.set(
-            updateData,
-            { merge: true }
-        );
+        await userRef.set({
+            online: true,
+            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
 
     }
 
-
     /*
-     * New Google user
+     * NEW GOOGLE ACCOUNT:
+     * Only here do we import Google profile information.
      */
     else{
 
-        const googleName =
-            String(
-                user.displayName ||
-                "Rsenger User"
-            ).trim();
+        const googleName = String(
+            user.displayName || "Rsenger User"
+        ).trim();
 
         const googleUsername =
             await createUniqueGoogleUsername(
@@ -31693,51 +31720,26 @@ async function completeGoogleLogin(user){
                 user.uid
             );
 
-
         await userRef.set({
 
-            name:
-                googleName,
-
-            username:
-                googleUsername,
-
-            phone:
-                user.phoneNumber || "",
-
-            email:
-                user.email || "",
-
-            bio:
-                "",
-
-            profilePic:
-                user.photoURL || "",
-
-            online:
-                true,
-
-            accountMethod:
-                "google",
+            name: googleName,
+            username: googleUsername,
+            phone: user.phoneNumber || "",
+            email: user.email || "",
+            bio: "",
+            profilePic: user.photoURL || "",
+            online: true,
+            accountMethod: "google",
 
             createdAt:
-                firebase.firestore
-                .FieldValue
-                .serverTimestamp(),
+                firebase.firestore.FieldValue.serverTimestamp(),
 
             lastLoginAt:
-                firebase.firestore
-                .FieldValue
-                .serverTimestamp()
+                firebase.firestore.FieldValue.serverTimestamp()
 
         });
-
     }
 
-
-    /*
-     * Make Firebase user available
-     */
     await new Promise(resolve => {
 
         if(auth.currentUser){
@@ -31745,185 +31747,64 @@ async function completeGoogleLogin(user){
             return;
         }
 
-        const unsubscribe =
-            auth.onAuthStateChanged(
-                currentUser => {
+        const unsubscribe = auth.onAuthStateChanged(currentUser => {
 
-                    if(currentUser){
+            if(currentUser){
+                unsubscribe();
+                resolve();
+            }
 
-                        unsubscribe();
-                        resolve();
-
-                    }
-
-                }
-            );
+        });
 
     });
 
+    const loginPage = document.getElementById("loginPage");
+    if(loginPage) loginPage.classList.add("hidden");
 
-    /*
-     * Hide Login
-     */
-    const loginPage =
-        document.getElementById(
-            "loginPage"
-        );
+    const registerPage = document.getElementById("registerPage");
+    if(registerPage) registerPage.classList.add("hidden");
 
-    if(loginPage){
-        loginPage.classList.add("hidden");
-    }
+    const homePage = document.getElementById("homePage");
+    if(homePage) homePage.classList.remove("hidden");
 
+    try{
+        if(typeof setupPresence === "function") setupPresence();
+    }catch(e){ console.error("Google presence error:",e); }
 
-    /*
-     * Hide Register
-     */
-    const registerPage =
-        document.getElementById(
-            "registerPage"
-        );
+    try{
+        if(typeof saveFCMToken === "function") saveFCMToken();
+    }catch(e){ console.error("Google FCM error:",e); }
 
-    if(registerPage){
-        registerPage.classList.add("hidden");
-    }
+    try{
+        if(typeof loadChats === "function") loadChats();
+    }catch(e){ console.error("Google chats error:",e); }
 
-
-    /*
-     * Show Home
-     */
-    const homePage =
-        document.getElementById(
-            "homePage"
-        );
-
-    if(homePage){
-        homePage.classList.remove("hidden");
-    }
-
-
-    /*
-     * Start Rsenger systems
-     */
+    if(window.lucide) lucide.createIcons();
 
     try{
 
-        if(
-            typeof setupPresence ===
-            "function"
-        ){
-            setupPresence();
-        }
-
-    }
-    catch(e){
-        console.error(
-            "Google presence error:",
-            e
-        );
-    }
-
-
-    try{
-
-        if(
-            typeof saveFCMToken ===
-            "function"
-        ){
-            saveFCMToken();
-        }
-
-    }
-    catch(e){
-        console.error(
-            "Google FCM error:",
-            e
-        );
-    }
-
-
-    try{
-
-        if(
-            typeof loadChats ===
-            "function"
-        ){
-            loadChats();
-        }
-
-    }
-    catch(e){
-        console.error(
-            "Google chats error:",
-            e
-        );
-    }
-
-
-    /*
-     * Refresh Lucide icons
-     */
-    if(window.lucide){
-        lucide.createIcons();
-    }
-
-
-    /*
-     * Always restore the global bottom navigation after Google login.
-     */
-    try{
-
-        const nav =
-            document.getElementById(
-                "globalBottomNav"
-            );
+        const nav = document.getElementById("globalBottomNav");
 
         if(nav){
 
-            nav.classList.remove(
-                "hidden-nav"
-            );
-
-            nav.style.removeProperty(
-                "display"
-            );
-
-            nav.style.removeProperty(
-                "visibility"
-            );
-
-            nav.style.removeProperty(
-                "opacity"
-            );
-
-            nav.style.removeProperty(
-                "pointer-events"
-            );
+            nav.classList.remove("hidden-nav");
+            nav.style.removeProperty("display");
+            nav.style.removeProperty("visibility");
+            nav.style.removeProperty("opacity");
+            nav.style.removeProperty("pointer-events");
 
         }
 
-        if(
-            typeof showBottomNav ===
-            "function"
-        ){
+        if(typeof showBottomNav === "function"){
             showBottomNav();
         }
 
-    }
-    catch(navError){
-
-        console.error(
-            "Google bottom-nav restore error:",
-            navError
-        );
-
+    }catch(navError){
+        console.error("Google bottom-nav restore error:", navError);
     }
 
-
-    googleLoginInProgress =
-        false;
-
+    googleLoginInProgress = false;
     resetGoogleButtons();
-
 }
 
 
@@ -54512,26 +54393,115 @@ const S={mode:'email'};
 function emailOk(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim())}
 function msg(text,title='Rsenger',type='error'){if(typeof premiumAlert==='function')return premiumAlert(text,title,type==='success'?'success':'error');alert(text)}
 async function findUsername(username){const u=String(username||'').trim().replace(/^@/,'').toLowerCase();if(!u)throw new Error('Enter your username first.');const q=await db.collection('users').where('username','==',u).limit(1).get();if(q.empty)throw new Error('No Rsenger account was found with that username.');const doc=q.docs[0];return{id:doc.id,data:doc.data()||{}}}
-function authEmailFromData(d){const e=String((d&&d.email)||'').trim().toLowerCase();const le=String((d&&d.loginEmail)||'').trim().toLowerCase();if(emailOk(e))return e;if(emailOk(le)&&!le.endsWith('@rsenger-phone.local'))return le;return ''}
+function authEmailFromData(d){const le=String((d&&d.loginEmail)||'').trim().toLowerCase();const e=String((d&&d.email)||'').trim().toLowerCase();if(emailOk(le))return le;if(emailOk(e))return e;return ''}
 async function signInWithIdentity(identity,password){
   const mode=S.mode;
   let email=String(identity||'').trim().toLowerCase();
+
   if(mode==='phone'){
-    const ph=String(identity||'').replace(/[^0-9+]/g,'');
-    if(!/^\+\d{8,15}$/.test(ph))throw new Error('Enter a valid phone number with country code.');
-    const q=await db.collection('users').where('phone','==',ph).limit(1).get();
-    if(q.empty)throw new Error('No Rsenger account was found with that phone number.');
-    email=authEmailFromData(q.docs[0].data()||{});
-    if(!email)throw new Error('This phone account does not have a linked login email.');
+
+    const raw=String(identity||'').trim();
+    const digits=raw.replace(/\D/g,'');
+
+    if(!digits || digits.length<8 || digits.length>15){
+      throw new Error('Enter a valid phone number.');
+    }
+
+    const candidates=[];
+    const addCandidate=v=>{
+      v=String(v||'').trim();
+      if(v && !candidates.includes(v)) candidates.push(v);
+    };
+
+    addCandidate(raw);
+    addCandidate('+'+digits);
+
+    if(digits.length===10){
+      addCandidate('+91'+digits);
+      addCandidate('91'+digits);
+      addCandidate(digits);
+    }
+
+    let phoneDoc=null;
+
+    for(const candidate of candidates){
+
+      const q=await db.collection('users')
+        .where('phone','==',candidate)
+        .limit(1)
+        .get();
+
+      if(!q.empty){
+        phoneDoc=q.docs[0];
+        break;
+      }
+    }
+
+    if(!phoneDoc){
+      throw new Error('No Rsenger account was found with that phone number.');
+    }
+
+    email=authEmailFromData(phoneDoc.data()||{});
+
+    if(!email){
+      throw new Error('This phone account does not have a linked login credential.');
+    }
+
   }else if(mode==='username'){
+
     const found=await findUsername(identity);
     email=authEmailFromData(found.data);
-    if(!email)throw new Error('This account does not have a linked login email.');
-  }else if(!emailOk(email))throw new Error('Enter a valid email address.');
-  if(!password)throw new Error('Enter your password.');
-  const c=await auth.signInWithEmailAndPassword(email,password);
-  try{await db.collection('users').doc(c.user.uid).set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp(),online:true},{merge:true})}catch(e){console.warn('Login profile update:',e)}
-  return c.user;
+
+    if(!email){
+      throw new Error('This username does not have a linked login credential.');
+    }
+
+  }else if(!emailOk(email)){
+
+    throw new Error('Enter a valid email address.');
+
+  }
+
+  if(!password){
+    throw new Error('Enter your password.');
+  }
+
+  try{
+
+    const c=await auth.signInWithEmailAndPassword(email,password);
+
+    try{
+      await db.collection('users').doc(c.user.uid).set({
+        lastLoginAt:firebase.firestore.FieldValue.serverTimestamp(),
+        online:true
+      },{merge:true});
+    }catch(e){
+      console.warn('Login profile update:',e);
+    }
+
+    return c.user;
+
+  }catch(error){
+
+    console.error('Identity login error:',error);
+
+    if(
+      error &&
+      (
+        error.code==='auth/invalid-credential' ||
+        error.code==='auth/wrong-password' ||
+        error.code==='auth/user-not-found'
+      )
+    ){
+
+      throw new Error(
+        'The login details are incorrect. Please check your password and try again.'
+      );
+
+    }
+
+    throw error;
+  }
 }
 async function setupLogin(){
  const page=$('loginPage'),form=page&&page.querySelector('.form-box');if(!form)return;
