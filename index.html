@@ -686,6 +686,12 @@ Already have account?
 
 
 
+<button type="button" class="rm-modes-launch" onclick="rmOpenModes()" aria-label="Open offline chat modes">
+  <span class="rm-launch-icon"><i data-lucide="radio-tower"></i></span>
+  <span class="rm-launch-copy"><strong>MODES</strong><small>Wi-Fi · Bluetooth · SIM</small></span>
+  <i data-lucide="chevron-right" class="rm-launch-arrow"></i>
+</button>
+
 <div class="section-title">
 
 <h3>
@@ -55141,6 +55147,62 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   }else{
     install();
   }
+})();
+</script>
+
+
+<!-- RSENGER MODES POPUP — UI ONLY; NOT CONNECTED TO MAIN INTERNET CHAT -->
+<div id="rmModesOverlay" class="rm-overlay" aria-hidden="true" onclick="if(event.target===this)rmCloseModes()">
+  <section class="rm-modal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+    <div class="rm-modal-head">
+      <div class="rm-brand-mark"><i data-lucide="radio-tower"></i></div>
+      <div class="rm-head-copy"><span class="rm-eyebrow">RSENGER CONNECT</span><h2 id="rmTitle">Chat Modes</h2><p>Choose how you want to connect</p></div>
+      <button class="rm-close" type="button" onclick="rmCloseModes()" aria-label="Close"><i data-lucide="x"></i></button>
+    </div>
+    <div id="rmModeHome" class="rm-view">
+      <div class="rm-mode-intro"><span class="rm-pulse"></span><span>Choose a mode to view its chats or find an account.</span></div>
+      <button class="rm-mode-card rm-wifi" onclick="rmOpenMode('wifi')" type="button">
+        <span class="rm-mode-icon"><i data-lucide="wifi"></i></span><span class="rm-mode-copy"><strong>Wi-Fi Chat</strong><small>Local network messaging</small><em id="rmCountWifi">Your Wi-Fi chats</em></span><i data-lucide="chevron-right" class="rm-chevron"></i>
+      </button>
+      <button class="rm-mode-card rm-blue" onclick="rmOpenMode('bluetooth')" type="button">
+        <span class="rm-mode-icon"><i data-lucide="bluetooth"></i></span><span class="rm-mode-copy"><strong>Bluetooth Chat</strong><small>Nearby device messaging</small><em id="rmCountBluetooth">Your Bluetooth chats</em></span><i data-lucide="chevron-right" class="rm-chevron"></i>
+      </button>
+      <button class="rm-mode-card rm-sim" onclick="rmOpenMode('sim')" type="button">
+        <span class="rm-mode-icon"><i data-lucide="message-square"></i></span><span class="rm-mode-copy"><strong>SIM SMS</strong><small>SMS using your mobile network</small><em id="rmCountSim">Your SMS chats</em></span><i data-lucide="chevron-right" class="rm-chevron"></i>
+      </button>
+      <div class="rm-note"><i data-lucide="shield-check"></i><span>This is the Modes interface preview. Account search, friends, and message delivery will be connected later.</span></div>
+    </div>
+    <div id="rmModeDetail" class="rm-view rm-hidden">
+      <button type="button" class="rm-back" onclick="rmBackToModes()"><i data-lucide="arrow-left"></i><span>All modes</span></button>
+      <div class="rm-detail-title"><span id="rmDetailIcon" class="rm-detail-icon"><i data-lucide="wifi"></i></span><div><h3 id="rmDetailName">Wi-Fi Chat</h3><p id="rmDetailSubtitle">Your conversations in this mode</p></div></div>
+      <label class="rm-search-label" for="rmAccountSearch">Find a Rsenger account</label>
+      <div class="rm-search"><i data-lucide="search"></i><input id="rmAccountSearch" type="search" placeholder="Search username..." autocomplete="off"><button type="button" onclick="rmSearchAccount()">Search</button></div>
+      <div id="rmSearchMessage" class="rm-search-message" aria-live="polite">Search will be connected to Rsenger accounts later.</div>
+      <div class="rm-list-heading"><strong>Recent chats</strong><span id="rmModeBadge">WI-FI</span></div>
+      <div id="rmModeChatList" class="rm-mode-chat-list">
+        <div class="rm-empty"><span><i data-lucide="messages-square"></i></span><strong>No chats in this mode yet</strong><small>Search for an account above to get started.</small></div>
+      </div>
+      <div class="rm-note rm-detail-note"><i data-lucide="info"></i><span>If the account is already your friend, a Chat action will appear after account search is connected. Otherwise, you can send a friend request.</span></div>
+    </div>
+  </section>
+</div>
+<style id="rsenger-modes-ui">
+.rm-modes-launch{width:calc(100% - 48px);margin:13px 24px 20px;min-height:76px;display:flex;align-items:center;gap:14px;padding:13px 17px;border-radius:24px;border:1px solid transparent;background:linear-gradient(#0d1322,#0d1322) padding-box,linear-gradient(110deg,#22d3ee,#6366f1,#a855f7) border-box;color:#f6f8ff;text-align:left;box-shadow:0 10px 30px #0004,0 0 22px #5b5df01a;cursor:pointer;touch-action:manipulation}
+.rm-launch-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(140deg,#143c56,#28204f);color:#36d9ff;flex:none}.rm-launch-icon svg{width:27px;height:27px}.rm-launch-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}.rm-launch-copy strong{font:700 16px Inter,sans-serif;letter-spacing:1.4px}.rm-launch-copy small{font:500 12px Inter,sans-serif;color:#99a8c3}.rm-launch-arrow{width:21px;color:#8797b6}
+.rm-overlay{position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,5,15,.76);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.rm-overlay.rm-visible{display:flex}.rm-modal{width:min(100%,460px);max-height:min(88dvh,760px);overflow:auto;border:1px solid #ffffff19;border-radius:30px;padding:21px 18px 18px;background:radial-gradient(ellipse at 0% 0%,#25234a 0,transparent 43%),linear-gradient(160deg,#121a2b,#080c16 78%);box-shadow:0 30px 90px #000a,inset 0 1px #ffffff0d;color:#f7f9ff;overscroll-behavior:contain}.rm-modal-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}.rm-brand-mark{width:48px;height:48px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(135deg,#7957ff,#20c7ef);color:#fff;box-shadow:0 6px 24px #5965ff38;flex:none}.rm-brand-mark svg{width:25px;height:25px}.rm-head-copy{flex:1;min-width:0}.rm-eyebrow{font-size:9px;letter-spacing:2px;font-weight:800;color:#54dafa}.rm-head-copy h2{font:700 23px 'Space Grotesk',Inter,sans-serif;margin:3px 0}.rm-head-copy p{font-size:11px;color:#9aa8c0;margin:0}.rm-close{width:37px;height:37px;border:1px solid #ffffff14;border-radius:13px;background:#ffffff08;color:#b8c5da;display:grid;place-items:center;flex:none}.rm-close svg{width:19px}.rm-mode-intro{display:flex;align-items:center;gap:9px;color:#aab7cc;font-size:11px;line-height:1.5;padding:0 3px 14px}.rm-pulse{width:8px;height:8px;border-radius:50%;background:#38d9c3;box-shadow:0 0 12px #38d9c3;flex:none}.rm-mode-card{width:100%;display:flex;align-items:center;gap:13px;padding:14px 12px;margin:0 0 11px;text-align:left;border:1px solid #ffffff12;border-radius:21px;background:linear-gradient(120deg,#ffffff09,#ffffff03);color:#f7f9ff;cursor:pointer;min-height:88px}.rm-mode-card:active{transform:scale(.99)}.rm-mode-icon{width:49px;height:49px;border-radius:16px;display:grid;place-items:center;flex:none}.rm-mode-icon svg{width:25px;height:25px}.rm-wifi .rm-mode-icon{color:#3bdcff;background:linear-gradient(145deg,#153c53,#17233a)}.rm-blue .rm-mode-icon{color:#8fa8ff;background:linear-gradient(145deg,#202d59,#171b36)}.rm-sim .rm-mode-icon{color:#c69bff;background:linear-gradient(145deg,#392650,#211a36)}.rm-mode-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.rm-mode-copy strong{font-size:14px;font-weight:700}.rm-mode-copy small{font-size:10px;color:#9ba9c1}.rm-mode-copy em{font-size:9px;color:#5fd9f2;font-style:normal;margin-top:2px}.rm-chevron{width:18px;color:#7d8ba7}.rm-note{display:flex;align-items:flex-start;gap:9px;padding:12px;border-radius:15px;background:#ffffff06;border:1px solid #ffffff0b;color:#8f9db5;font-size:10px;line-height:1.55}.rm-note svg{width:16px;height:16px;flex:none;color:#7e8fff}.rm-hidden{display:none!important}.rm-back{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:#9eacc5;font-size:12px;padding:0 0 17px}.rm-back svg{width:17px}.rm-detail-title{display:flex;align-items:center;gap:12px;padding:0 0 20px}.rm-detail-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:#18364a;color:#3bdcff}.rm-detail-icon svg{width:25px;height:25px}.rm-detail-title h3{font-size:18px;margin:0 0 4px}.rm-detail-title p{font-size:10px;color:#94a3bc;margin:0}.rm-search-label{display:block;font-size:11px;font-weight:700;color:#c9d3e5;margin-bottom:8px}.rm-search{display:flex;align-items:center;gap:8px;border:1px solid #ffffff17;background:#080e1b;border-radius:16px;padding:7px 7px 7px 12px}.rm-search>svg{width:18px;color:#8292ad;flex:none}.rm-search input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:#f5f7ff;font:12px Inter,sans-serif;padding:9px 0}.rm-search input::placeholder{color:#74829b}.rm-search button{border:0;border-radius:12px;background:linear-gradient(130deg,#865bff,#22c9ef);color:#fff;font-weight:700;font-size:11px;padding:11px 13px}.rm-search-message{font-size:10px;color:#8796b0;line-height:1.5;padding:9px 2px 17px}.rm-list-heading{display:flex;align-items:center;justify-content:space-between;padding:0 1px 10px}.rm-list-heading strong{font-size:12px}.rm-list-heading span{font-size:8px;letter-spacing:1px;color:#66dff3;background:#1b3042;padding:6px 8px;border-radius:8px}.rm-empty{display:flex;align-items:center;text-align:center;flex-direction:column;padding:24px 12px 22px;border:1px dashed #ffffff17;border-radius:18px;background:#ffffff03}.rm-empty>span{display:grid;place-items:center;width:43px;height:43px;border-radius:14px;background:#20213c;color:#8f9bff;margin-bottom:11px}.rm-empty svg{width:22px}.rm-empty strong{font-size:12px;margin-bottom:6px}.rm-empty small{font-size:10px;line-height:1.5;color:#8998b1}.rm-detail-note{margin-top:14px}
+@media(max-width:380px){.rm-modal{padding:17px 13px;border-radius:25px}.rm-head-copy h2{font-size:20px}.rm-mode-card{padding:12px 10px}.rm-modes-launch{width:calc(100% - 32px);margin-left:16px;margin-right:16px}}
+</style>
+<script id="rsenger-modes-ui-script">
+(function(){
+  const overlay=()=>document.getElementById('rmModesOverlay');
+  const labels={wifi:{name:'Wi-Fi Chat',sub:'Your conversations in this mode',badge:'WI-FI',icon:'wifi'},bluetooth:{name:'Bluetooth Chat',sub:'Nearby device conversations',badge:'BLUETOOTH',icon:'bluetooth'},sim:{name:'SIM SMS',sub:'Your SMS conversations',badge:'SIM SMS',icon:'message-square'}};
+  window.rmOpenModes=function(){const o=overlay();if(!o)return;o.classList.add('rm-visible');o.setAttribute('aria-hidden','false');document.getElementById('rmModeHome').classList.remove('rm-hidden');document.getElementById('rmModeDetail').classList.add('rm-hidden');document.body.style.overflow='hidden';if(window.lucide)lucide.createIcons();};
+  window.rmCloseModes=function(){const o=overlay();if(!o)return;o.classList.remove('rm-visible');o.setAttribute('aria-hidden','true');document.body.style.overflow='';};
+  window.rmOpenMode=function(mode){const d=labels[mode];if(!d)return;document.getElementById('rmModeHome').classList.add('rm-hidden');document.getElementById('rmModeDetail').classList.remove('rm-hidden');document.getElementById('rmDetailName').textContent=d.name;document.getElementById('rmDetailSubtitle').textContent=d.sub;document.getElementById('rmModeBadge').textContent=d.badge;document.getElementById('rmDetailIcon').innerHTML='<i data-lucide="'+d.icon+'"></i>';document.getElementById('rmAccountSearch').value='';document.getElementById('rmSearchMessage').textContent='Account search will be connected to Rsenger accounts later.';document.getElementById('rmModeChatList').innerHTML='<div class="rm-empty"><span><i data-lucide="messages-square"></i></span><strong>No chats in this mode yet</strong><small>Search for an account above to get started.</small></div>';if(window.lucide)lucide.createIcons();};
+  window.rmBackToModes=function(){document.getElementById('rmModeDetail').classList.add('rm-hidden');document.getElementById('rmModeHome').classList.remove('rm-hidden');if(window.lucide)lucide.createIcons();};
+  window.rmSearchAccount=function(){const q=document.getElementById('rmAccountSearch').value.trim();document.getElementById('rmSearchMessage').textContent=q?'Account search for “'+q.replace(/[<>]/g,'')+'” will be connected later. Friend status, Chat, and Friend Request actions are not active in this UI-only preview.':'Enter a username to search. Account search will be connected later.';};
+  document.getElementById('rmAccountSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();window.rmSearchAccount();}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay()?.classList.contains('rm-visible'))window.rmCloseModes();});
 })();
 </script>
 
