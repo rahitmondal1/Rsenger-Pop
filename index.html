@@ -218,6 +218,50 @@ body.dark .rs-profile-photo-menu-overlay{background:rgba(2,5,12,.70) !important;
 }
 </style>
 
+
+<style id="rsenger-games-premium-style">
+.rs-shortcut-row{display:flex;align-items:stretch;gap:9px;margin:5px 16px 9px;max-width:100%;min-width:0}
+.rs-shortcut-row .rm-modes-launch{margin:0;min-width:0;flex:1;width:auto;max-width:none;justify-content:flex-start;padding:6px 9px;border-radius:16px;min-height:46px;gap:7px}
+.rs-shortcut-row .rm-launch-copy{flex:1}
+.rs-shortcut-row .rm-launch-copy small{display:block;font-size:9px;white-space:nowrap}
+.rs-shortcut-row .rm-launch-arrow{width:14px;flex:none}
+.rs-shortcut-row .rm-launch-icon{width:31px;height:31px;border-radius:11px}
+.rs-games-launch{flex:1;min-width:0;max-width:48%;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:16px;border:1px solid rgba(139,92,246,.48);background:linear-gradient(135deg,#15152b,#0d1927);color:#f7f7ff;text-align:left;box-shadow:0 9px 26px #0004,inset 0 1px 0 #ffffff0c;cursor:pointer;touch-action:manipulation}
+.rs-games-launch:active,.rs-shortcut-row .rm-modes-launch:active{transform:scale(.98)}
+.rs-games-launch-icon{width:31px;height:31px;display:grid;place-items:center;flex:none;border-radius:11px;background:linear-gradient(145deg,#7137d8,#2563eb);color:white;box-shadow:0 4px 14px #6d28d933}
+.rs-games-launch-icon svg{width:18px;height:18px}
+.rs-games-launch-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.rs-games-launch-copy strong{font:700 10px Inter,sans-serif;letter-spacing:1.1px}
+.rs-games-launch-copy small{font:500 9px Inter,sans-serif;color:#a5b4fc;white-space:nowrap}
+.rs-games-overlay{position:fixed;inset:0;z-index:100050;display:none;align-items:stretch;justify-content:center;background:radial-gradient(ellipse at 0% 0%,#292052 0,transparent 42%),linear-gradient(160deg,#101827,#050811 82%);color:#f7f8ff;font-family:Inter,system-ui,sans-serif;overflow:auto;padding:calc(12px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));box-sizing:border-box}
+.rs-games-overlay.rs-games-visible{display:flex}
+.rs-games-shell{width:100%;max-width:560px;margin:auto;min-height:100%;display:flex;flex-direction:column;gap:16px}
+.rs-games-header{display:flex;align-items:center;gap:12px;padding:5px 1px 12px}
+.rs-games-back,.rs-game-icon-btn{border:1px solid #ffffff18;background:#ffffff0a;color:#f8fafc;border-radius:14px;width:42px;height:42px;display:grid;place-items:center;flex:none}
+.rs-games-heading{flex:1;min-width:0}.rs-games-heading h2{margin:0;font-size:22px;letter-spacing:-.7px}.rs-games-heading p{margin:4px 0 0;font-size:12px;color:#9caac3}
+.rs-games-online{font-size:10px;color:#8cf0c9;background:#0c382d;border:1px solid #1b7657;border-radius:999px;padding:7px 9px;white-space:nowrap}
+.rs-games-intro{border:1px solid #ffffff12;border-radius:22px;padding:17px;background:linear-gradient(125deg,#1b2440,#111626 65%,#21153a);box-shadow:0 14px 36px #0003}
+.rs-games-kicker{font-size:10px;letter-spacing:1.6px;color:#a5b4fc;font-weight:800}.rs-games-intro h3{margin:7px 0 5px;font-size:21px}.rs-games-intro p{margin:0;color:#aab5ca;font-size:12px;line-height:1.6}
+.rs-games-list{display:grid;grid-template-columns:1fr;gap:11px}
+.rs-game-card{width:100%;display:flex;align-items:center;gap:13px;padding:14px;border-radius:20px;border:1px solid #ffffff14;background:linear-gradient(125deg,#151c2b,#0c111d);color:#f8fafc;text-align:left;cursor:pointer;box-shadow:0 10px 24px #0002}
+.rs-game-card:active{transform:scale(.99)}.rs-game-card-art{width:55px;height:55px;border-radius:16px;display:grid;place-items:center;flex:none;color:white}.rs-game-card-art svg{width:27px;height:27px}
+.rs-game-card-art.tictactoe{background:linear-gradient(135deg,#2563eb,#7c3aed)}.rs-game-card-art.snake{background:linear-gradient(135deg,#059669,#84cc16)}.rs-game-card-art.puzzle{background:linear-gradient(135deg,#ea580c,#db2777)}
+.rs-game-card-copy{flex:1;min-width:0}.rs-game-card-copy strong{display:block;font-size:15px}.rs-game-card-copy small{display:block;color:#9ba9bf;font-size:11px;line-height:1.5;margin-top:4px}.rs-game-card-arrow{color:#8392ab}
+.rs-game-view{display:none;flex-direction:column;gap:13px;flex:1}.rs-game-view.active{display:flex}.rs-games-home.hidden{display:none}
+.rs-game-toolbar{display:flex;align-items:center;gap:10px}.rs-game-toolbar h3{font-size:18px;margin:0;flex:1}.rs-game-subtitle{font-size:11px;color:#9aa8c0}
+.rs-game-panel{border:1px solid #ffffff14;border-radius:22px;background:linear-gradient(150deg,#151c2b,#0b101a);padding:14px;box-shadow:0 16px 35px #0003}
+.rs-game-actions{display:flex;gap:9px;flex-wrap:wrap}.rs-game-btn{border:1px solid #ffffff1b;background:#202a3d;color:#f8fafc;border-radius:13px;padding:10px 13px;font-weight:700;font-size:12px;cursor:pointer;touch-action:manipulation}.rs-game-btn.primary{background:linear-gradient(120deg,#6366f1,#7c3aed);border-color:#8b5cf6}.rs-game-status{text-align:center;color:#c7d2fe;font-weight:700;font-size:13px;min-height:20px;margin:4px 0 12px}
+.rs-ttt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:330px;margin:0 auto}.rs-ttt-cell{aspect-ratio:1;border:1px solid #ffffff16;border-radius:17px;background:linear-gradient(145deg,#202a40,#121a2a);color:#a5b4fc;font-size:clamp(36px,11vw,56px);font-weight:800;display:grid;place-items:center;cursor:pointer}.rs-ttt-cell[data-mark="O"]{color:#67e8f9}.rs-ttt-cell:disabled{cursor:default}.rs-ttt-cell.winner{background:linear-gradient(135deg,#14532d,#166534);border-color:#4ade80}
+.rs-snake-wrap{display:flex;justify-content:center}.rs-snake-canvas{width:min(100%,360px);aspect-ratio:1;background:#07140f;border:1px solid #235642;border-radius:15px;touch-action:none}
+.rs-snake-score{display:flex;justify-content:space-between;color:#b7c7da;font-size:12px;margin-bottom:10px}.rs-snake-controls{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,42px);justify-content:center;gap:5px;margin-top:13px}.rs-snake-controls button{border:1px solid #ffffff20;background:#202a3b;color:white;border-radius:12px;font-size:18px}
+.rs-2048-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-width:360px;margin:auto;padding:8px;border-radius:14px;background:#263246;touch-action:none;user-select:none}.rs-2048-cell{aspect-ratio:1;border-radius:9px;background:#39465a;display:grid;place-items:center;font-weight:800;font-size:clamp(16px,5vw,25px);color:#fff}.rs-2048-cell[data-v="2"]{background:#dbeafe;color:#263246}.rs-2048-cell[data-v="4"]{background:#bfdbfe;color:#263246}.rs-2048-cell[data-v="8"]{background:#60a5fa}.rs-2048-cell[data-v="16"]{background:#818cf8}.rs-2048-cell[data-v="32"]{background:#a78bfa}.rs-2048-cell[data-v="64"]{background:#c084fc}.rs-2048-cell[data-v="128"],.rs-2048-cell[data-v="256"],.rs-2048-cell[data-v="512"],.rs-2048-cell[data-v="1024"],.rs-2048-cell[data-v="2048"]{background:#f59e0b;font-size:clamp(13px,4vw,21px)}
+.rs-2048-score-row{display:flex;gap:8px;margin-bottom:12px}.rs-2048-score{flex:1;text-align:center;background:#ffffff0a;border:1px solid #ffffff12;border-radius:12px;padding:9px;font-size:11px;color:#aab5ca}.rs-2048-score b{display:block;color:white;font-size:18px;margin-top:3px}
+.rs-games-help{color:#8f9db4;font-size:11px;line-height:1.55;text-align:center}
+@media(min-width:460px){.rs-games-list{grid-template-columns:1fr}.rs-games-overlay{padding-left:22px;padding-right:22px}}
+@media(max-width:360px){.rs-shortcut-row{gap:6px;margin-left:12px;margin-right:12px}.rs-shortcut-row .rm-modes-launch,.rs-games-launch{padding-left:7px;padding-right:7px;gap:6px}.rs-shortcut-row .rm-launch-copy small{font-size:8px}.rs-games-launch-copy small{font-size:8px}.rs-games-launch-icon,.rs-shortcut-row .rm-launch-icon{width:28px;height:28px}}
+@media(prefers-reduced-motion:reduce){.rs-game-card,.rs-games-launch,.rm-modes-launch{transition:none!important}}
+</style>
+
 </head>
 
 <body>
@@ -686,11 +730,17 @@ Already have account?
 
 
 
+<div class="rs-shortcut-row" aria-label="Rsenger shortcuts">
 <button type="button" class="rm-modes-launch" onclick="rmOpenModes()" aria-label="Open chat modes">
   <span class="rm-launch-icon"><i data-lucide="radio-tower"></i></span>
   <span class="rm-launch-copy"><strong>MODES</strong><small>Wi-Fi · Bluetooth · SIM</small></span>
   <i data-lucide="chevron-right" class="rm-launch-arrow"></i>
 </button>
+<button type="button" class="rs-games-launch" onclick="rsGamesOpen()" aria-label="Open offline games">
+  <span class="rs-games-launch-icon"><i data-lucide="gamepad-2"></i></span>
+  <span class="rs-games-launch-copy"><strong>GAMES</strong><small>3 offline games</small></span>
+</button>
+</div>
 
 <div class="section-title">
 
@@ -55357,6 +55407,84 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   window.rmCloseModeChat=function(){if(activeMessagesUnsub){activeMessagesUnsub();activeMessagesUnsub=null;}if(modeNavState==='chat'){try{history.back();}catch(e){showModeState('detail');subscribeRecentChats();}}else{showModeState('detail');subscribeRecentChats();}};
   window.rmPreviewSendMessage=async function(){const input=el('rmChatMessageInput'),text=input.value.trim(),current=currentUser();if(!text||!current)return;if(!activeConversationRef){setMessage('Open a conversation before sending.','error');return;}input.value='';try{await activeConversationRef.collection('messages').add({text,senderUid:current.uid,senderEmail:current.email||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});await activeConversationRef.set({lastMessage:text,lastMessageAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(err){console.error('Send mode message failed',err);input.value=text;premiumAlert(err.message||'Message could not be saved. Check Firestore permissions.','Message not sent','error');}};
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(el('rmModeChatPage').classList.contains('rm-chat-page-visible'))window.rmCloseModeChat();else if(overlay()?.classList.contains('rm-visible'))window.rmCloseModes();}});
+})();
+</script>
+
+
+<div id="rsGamesOverlay" class="rs-games-overlay" role="dialog" aria-modal="true" aria-label="Rsenger Offline Games">
+ <div class="rs-games-shell">
+  <header class="rs-games-header">
+   <button class="rs-games-back" type="button" onclick="rsGamesClose()" aria-label="Close games"><i data-lucide="arrow-left"></i></button>
+   <div class="rs-games-heading"><h2>Rsenger Games</h2><p>Play anywhere, even offline</p></div>
+   <span class="rs-games-online"><i data-lucide="wifi-off" style="width:12px;height:12px;vertical-align:-2px"></i> OFFLINE</span>
+  </header>
+  <div id="rsGamesHome" class="rs-games-home">
+   <section class="rs-games-intro"><span class="rs-games-kicker">YOUR PLAY ZONE</span><h3>Take a quick break.</h3><p>Three lightweight games, built into Rsenger. Your personal best scores stay on this device.</p></section>
+   <div class="rs-games-list" style="margin-top:13px">
+    <button class="rs-game-card" type="button" onclick="rsGameStart('ttt')"><span class="rs-game-card-art tictactoe"><i data-lucide="grid-2x2"></i></span><span class="rs-game-card-copy"><strong>Tic-Tac-Toe</strong><small>Play with a friend on the same phone. X goes first.</small></span><i data-lucide="chevron-right" class="rs-game-card-arrow"></i></button>
+    <button class="rs-game-card" type="button" onclick="rsGameStart('snake')"><span class="rs-game-card-art snake"><i data-lucide="gamepad-2"></i></span><span class="rs-game-card-copy"><strong>Snake Classic</strong><small>Collect food, grow longer and beat your best score.</small></span><i data-lucide="chevron-right" class="rs-game-card-arrow"></i></button>
+    <button class="rs-game-card" type="button" onclick="rsGameStart('2048')"><span class="rs-game-card-art puzzle"><i data-lucide="brain"></i></span><span class="rs-game-card-copy"><strong>2048 Puzzle</strong><small>Swipe tiles, merge numbers and reach 2048.</small></span><i data-lucide="chevron-right" class="rs-game-card-arrow"></i></button>
+   </div>
+  </div>
+  <section id="rsTttView" class="rs-game-view">
+   <div class="rs-game-toolbar"><h3>Tic-Tac-Toe</h3><span class="rs-game-subtitle">2 players · same phone</span></div>
+   <div class="rs-game-panel"><div id="rsTttStatus" class="rs-game-status" aria-live="polite">X's turn</div><div id="rsTttGrid" class="rs-ttt-grid"></div></div>
+   <div class="rs-game-actions"><button class="rs-game-btn primary" onclick="rsTttReset()">New round</button><button class="rs-game-btn" onclick="rsGameHome()">All games</button></div>
+   <p class="rs-games-help">X and O take turns. Get three in a row to win. The board is reset only when you start a new round.</p>
+  </section>
+  <section id="rsSnakeView" class="rs-game-view">
+   <div class="rs-game-toolbar"><h3>Snake Classic</h3><span class="rs-game-subtitle">Arcade</span></div>
+   <div class="rs-game-panel"><div class="rs-snake-score"><span>Score <b id="rsSnakeScore">0</b></span><span>Best <b id="rsSnakeBest">0</b></span></div><div class="rs-snake-wrap"><canvas id="rsSnakeCanvas" class="rs-snake-canvas" width="360" height="360" aria-label="Snake game board"></canvas></div><div id="rsSnakeStatus" class="rs-game-status" aria-live="polite" style="margin:12px 0 0">Tap Start to play</div><div class="rs-snake-controls"><span></span><button onclick="rsSnakeTurn(0,-1)" aria-label="Up">↑</button><span></span><button onclick="rsSnakeTurn(-1,0)" aria-label="Left">←</button><button onclick="rsSnakeTurn(0,1)" aria-label="Down">↓</button><button onclick="rsSnakeTurn(1,0)" aria-label="Right">→</button></div></div>
+   <div class="rs-game-actions"><button id="rsSnakeStart" class="rs-game-btn primary" onclick="rsSnakeStart()">Start / Restart</button><button id="rsSnakePause" class="rs-game-btn" onclick="rsSnakePause()">Pause</button><button class="rs-game-btn" onclick="rsGameHome()">All games</button></div>
+   <p class="rs-games-help">Use the arrows or swipe on the board. Avoid the walls and your own tail.</p>
+  </section>
+  <section id="rs2048View" class="rs-game-view">
+   <div class="rs-game-toolbar"><h3>2048 Puzzle</h3><span class="rs-game-subtitle">Number puzzle</span></div>
+   <div class="rs-game-panel"><div class="rs-2048-score-row"><div class="rs-2048-score">SCORE<b id="rs2048Score">0</b></div><div class="rs-2048-score">BEST<b id="rs2048Best">0</b></div></div><div id="rs2048Status" class="rs-game-status" aria-live="polite">Swipe to move tiles</div><div id="rs2048Board" class="rs-2048-board" aria-label="2048 board"></div></div>
+   <div class="rs-game-actions"><button class="rs-game-btn primary" onclick="rs2048Reset()">New game</button><button class="rs-game-btn" onclick="rsGameHome()">All games</button></div>
+   <p class="rs-games-help">Swipe or use arrow keys. Equal tiles merge; after a move, a new tile appears. Reach 2048 to win.</p>
+  </section>
+ </div>
+</div>
+<script id="rsenger-offline-games-script">
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const overlay=$('rsGamesOverlay');
+let activeGame='',ttt=Array(9).fill(''),tttTurn='X',tttDone=false;
+let snake=null,snakeTimer=null,snakePaused=true,snakeDir={x:1,y:0},snakeNext={x:1,y:0},snakeFood=null,snakeScore=0;
+let board2048=[],score2048=0,over2048=false,won2048=false;
+function bestGet(k){try{return Number(localStorage.getItem('rsenger.game.'+k)||0)}catch(_){return 0}}
+function bestSet(k,v){try{localStorage.setItem('rsenger.game.'+k,String(v))}catch(_){}}
+function iconRefresh(){if(window.lucide)window.lucide.createIcons()}
+window.rsGamesOpen=function(){overlay.classList.add('rs-games-visible');rsGameHome();iconRefresh();};
+window.rsGamesClose=function(){overlay.classList.remove('rs-games-visible');stopSnake();};
+window.rsGameHome=function(){stopSnake();activeGame='';$('rsGamesHome').classList.remove('hidden');['rsTttView','rsSnakeView','rs2048View'].forEach(id=>$(id).classList.remove('active'));};
+window.rsGameStart=function(game){stopSnake();activeGame=game;$('rsGamesHome').classList.add('hidden');['rsTttView','rsSnakeView','rs2048View'].forEach(id=>$(id).classList.remove('active'));if(game==='ttt'){$('rsTttView').classList.add('active');rsTttReset()}else if(game==='snake'){$('rsSnakeView').classList.add('active');drawSnake();$('rsSnakeStatus').textContent='Tap Start to play'}else{$('rs2048View').classList.add('active');rs2048Reset()}iconRefresh();};
+window.rsTttReset=function(){ttt=Array(9).fill('');tttTurn='X';tttDone=false;$('rsTttStatus').textContent="X's turn";renderTtt()};
+function renderTtt(){const grid=$('rsTttGrid');grid.innerHTML='';ttt.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.className='rs-ttt-cell';b.textContent=v;b.dataset.mark=v;b.setAttribute('aria-label','Cell '+(i+1)+(v?', '+v:''));b.disabled=!!v||tttDone;b.onclick=()=>playTtt(i);grid.appendChild(b)});}
+function playTtt(i){if(tttDone||ttt[i])return;ttt[i]=tttTurn;const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const win=wins.find(line=>line.every(n=>ttt[n]===tttTurn));if(win){tttDone=true;$('rsTttStatus').textContent=tttTurn+' wins! 🎉';win.forEach(n=>$('rsTttGrid').children[n].classList.add('winner'))}else if(ttt.every(Boolean)){tttDone=true;$('rsTttStatus').textContent="It's a draw!"}else{tttTurn=tttTurn==='X'?'O':'X';$('rsTttStatus').textContent=tttTurn+"'s turn"}renderTtt();if(win)win.forEach(n=>$('rsTttGrid').children[n].classList.add('winner'));}
+function stopSnake(){if(snakeTimer){clearInterval(snakeTimer);snakeTimer=null}snakePaused=true}
+function spawnFood(){let p;do{p={x:Math.floor(Math.random()*18),y:Math.floor(Math.random()*18)}}while(snake.some(s=>s.x===p.x&&s.y===p.y));return p}
+function drawSnake(){const c=$('rsSnakeCanvas');if(!c)return;const ctx=c.getContext('2d'),cell=20;ctx.clearRect(0,0,360,360);ctx.fillStyle='#07140f';ctx.fillRect(0,0,360,360);ctx.strokeStyle='#123325';ctx.lineWidth=.5;for(let n=0;n<=360;n+=cell){ctx.beginPath();ctx.moveTo(n,0);ctx.lineTo(n,360);ctx.stroke();ctx.beginPath();ctx.moveTo(0,n);ctx.lineTo(360,n);ctx.stroke()}if(snakeFood){ctx.fillStyle='#fb7185';ctx.beginPath();ctx.arc(snakeFood.x*cell+10,snakeFood.y*cell+10,7,0,Math.PI*2);ctx.fill()}(snake||[]).forEach((p,i)=>{ctx.fillStyle=i?'#22c55e':'#a3e635';ctx.beginPath();ctx.roundRect(p.x*cell+2,p.y*cell+2,16,16,5);ctx.fill()});$('rsSnakeScore').textContent=snakeScore;$('rsSnakeBest').textContent=bestGet('snake')}
+window.rsSnakeStart=function(){stopSnake();snake=[{x:5,y:9},{x:4,y:9},{x:3,y:9}];snakeDir={x:1,y:0};snakeNext={x:1,y:0};snakeScore=0;snakeFood=spawnFood();snakePaused=false;$('rsSnakeStatus').textContent='Playing';drawSnake();snakeTimer=setInterval(snakeTick,125)};
+window.rsSnakePause=function(){if(!snake||!snake.length){$('rsSnakeStatus').textContent='Tap Start to play';return}if(snakeTimer){clearInterval(snakeTimer);snakeTimer=null;snakePaused=true;$('rsSnakeStatus').textContent='Paused'}else if(snakePaused){snakePaused=false;$('rsSnakeStatus').textContent='Playing';snakeTimer=setInterval(snakeTick,125)}};
+function snakeTick(){snakeDir=snakeNext;const head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};if(head.x<0||head.x>=18||head.y<0||head.y>=18||snake.some((p,i)=>i>0&&p.x===head.x&&p.y===head.y)){stopSnake();$('rsSnakeStatus').textContent='Game over — score '+snakeScore;return}snake.unshift(head);if(head.x===snakeFood.x&&head.y===snakeFood.y){snakeScore+=10;bestSet('snake',Math.max(bestGet('snake'),snakeScore));snakeFood=spawnFood()}else snake.pop();drawSnake()}
+window.rsSnakeTurn=function(x,y){if(!snake||snakePaused)return;if(x===-snakeDir.x&&y===-snakeDir.y)return;snakeNext={x,y}};
+const snakeCanvas=$('rsSnakeCanvas');let touchStart=null;
+snakeCanvas.addEventListener('touchstart',e=>{const t=e.changedTouches[0];touchStart={x:t.clientX,y:t.clientY}},{passive:true});
+snakeCanvas.addEventListener('touchend',e=>{if(!touchStart)return;const t=e.changedTouches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;if(Math.max(Math.abs(dx),Math.abs(dy))>18){if(Math.abs(dx)>Math.abs(dy))rsSnakeTurn(dx>0?1:-1,0);else rsSnakeTurn(0,dy>0?1:-1)}touchStart=null},{passive:true});
+function add2048(){const empty=[];board2048.forEach((v,i)=>{if(!v)empty.push(i)});if(empty.length)board2048[empty[Math.floor(Math.random()*empty.length)]]=Math.random()<.9?2:4}
+function render2048(){const b=$('rs2048Board');b.innerHTML='';board2048.forEach(v=>{const d=document.createElement('div');d.className='rs-2048-cell';d.dataset.v=v||0;d.textContent=v||'';b.appendChild(d)});$('rs2048Score').textContent=score2048;$('rs2048Best').textContent=bestGet('2048')}
+window.rs2048Reset=function(){board2048=Array(16).fill(0);score2048=0;over2048=false;won2048=false;add2048();add2048();$('rs2048Status').textContent='Swipe or use arrow keys';render2048()};
+function slideLine(line){const vals=line.filter(Boolean),out=[];for(let i=0;i<vals.length;i++){if(vals[i]===vals[i+1]){out.push(vals[i]*2);score2048+=vals[i]*2;i++}else out.push(vals[i])}while(out.length<4)out.push(0);return out}
+function move2048(dir){if(over2048)return;const old=board2048.join(',');for(let n=0;n<4;n++){let ids=[];for(let k=0;k<4;k++){let r,c;if(dir==='left'){r=n;c=k}else if(dir==='right'){r=n;c=3-k}else if(dir==='up'){r=k;c=n}else{r=3-k;c=n}ids.push(r*4+c)}const vals=slideLine(ids.map(i=>board2048[i]));ids.forEach((id,j)=>board2048[id]=vals[j])}if(old===board2048.join(','))return;add2048();bestSet('2048',Math.max(bestGet('2048'),score2048));render2048();if(board2048.includes(2048)&&!won2048){won2048=true;$('rs2048Status').textContent='You reached 2048! Amazing!'}else if(!board2048.some(v=>!v)&&!hasMerge()){over2048=true;$('rs2048Status').textContent='No moves left — start a new game'}else if(!won2048)$('rs2048Status').textContent='Keep merging tiles!'}
+function hasMerge(){for(let r=0;r<4;r++)for(let c=0;c<4;c++){let i=r*4+c;if(c<3&&board2048[i]===board2048[i+1]||r<3&&board2048[i]===board2048[i+4])return true}return false}
+let swipeStart=null;const b2048=$('rs2048Board');
+b2048.addEventListener('touchstart',e=>{const t=e.changedTouches[0];swipeStart={x:t.clientX,y:t.clientY}},{passive:true});
+b2048.addEventListener('touchend',e=>{if(!swipeStart)return;const t=e.changedTouches[0],dx=t.clientX-swipeStart.x,dy=t.clientY-swipeStart.y;if(Math.max(Math.abs(dx),Math.abs(dy))>20)move2048(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));swipeStart=null},{passive:true});
+document.addEventListener('keydown',e=>{if(!overlay.classList.contains('rs-games-visible'))return;if(activeGame==='2048'&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();move2048(({ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'})[e.key])}if(activeGame==='snake'&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const m={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];rsSnakeTurn(...m)}if(e.key==='Escape')rsGamesClose()});
+overlay.addEventListener('click',e=>{if(e.target===overlay)rsGamesClose()});
 })();
 </script>
 
